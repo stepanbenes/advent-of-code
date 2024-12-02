@@ -15,7 +15,7 @@ pub fn similarity_score() -> u32 {
     score
 }
 
-pub fn get_lists() -> (Vec<u32>, Vec<u32>) {
+fn get_lists() -> (Vec<u32>, Vec<u32>) {
     // read input from file day1.txt
     let input = include_str!("../input/day1.txt");
     // split input by newlines
