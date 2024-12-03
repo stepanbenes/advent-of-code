@@ -17,4 +17,8 @@ fn main() {
         "day 3, result of multiplications: {:?}",
         day3::add_results_of_multiplications()
     );
+    println!(
+        "day 3, result of conditional multiplications: {:?}",
+        day3::add_results_of_conditional_multiplications()
+    );
 }
