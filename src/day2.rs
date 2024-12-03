@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use std::cmp::Ordering;
 
 pub fn safe_reports_count() -> u32 {
     let levels = get_reports();
@@ -22,13 +23,13 @@ pub fn safe_reports_count_with_problem_dampener() -> u32 {
     count
 }
 
-fn get_report_variations(report: &Vec<u32>) -> Vec<Vec<u32>> {
+fn get_report_variations(report: &[u32]) -> Vec<Vec<u32>> {
     // return all variations of the report with one number removed
     report
         .iter()
         .enumerate()
         .map(|(i, _)| {
-            let mut variation = report.clone();
+            let mut variation = report.to_owned();
             variation.remove(i);
             variation
         })
@@ -62,18 +63,16 @@ enum ReportBehaviour {
     Constant,
 }
 
-fn is_report_safe(report: &Vec<u32>) -> bool {
+fn is_report_safe(report: &[u32]) -> bool {
     let mut behaviour = ReportBehaviour::Undetermined;
     let mut max_diff = 0;
     for (&a, &b) in report.iter().tuple_windows() {
         match behaviour {
             ReportBehaviour::Undetermined => {
-                if a < b {
-                    behaviour = ReportBehaviour::Increasing;
-                } else if a > b {
-                    behaviour = ReportBehaviour::Decreasing;
-                } else {
-                    behaviour = ReportBehaviour::Constant;
+                behaviour = match a.cmp(&b) {
+                    Ordering::Less => ReportBehaviour::Increasing,
+                    Ordering::Greater => ReportBehaviour::Decreasing,
+                    Ordering::Equal => ReportBehaviour::Constant,
                 }
             }
             ReportBehaviour::Increasing => {
