@@ -2,23 +2,37 @@ use itertools::Itertools;
 
 pub fn safe_reports_count() -> u32 {
     let levels = get_reports();
-    let count = levels.iter().filter(|report| is_report_safe(report)).count() as u32;
+    let count = levels
+        .iter()
+        .filter(|report| is_report_safe(report))
+        .count() as u32;
     count
 }
 
 pub fn safe_reports_count_with_problem_dampener() -> u32 {
     let levels = get_reports();
-    let count = levels.iter().filter(|report| get_report_variations(report).iter().any(|v| is_report_safe(v))).count() as u32;
+    let count = levels
+        .iter()
+        .filter(|report| {
+            get_report_variations(report)
+                .iter()
+                .any(|v| is_report_safe(v))
+        })
+        .count() as u32;
     count
 }
 
 fn get_report_variations(report: &Vec<u32>) -> Vec<Vec<u32>> {
     // return all variations of the report with one number removed
-    report.iter().enumerate().map(|(i, _)| {
-        let mut variation = report.clone();
-        variation.remove(i);
-        variation
-    }).collect()
+    report
+        .iter()
+        .enumerate()
+        .map(|(i, _)| {
+            let mut variation = report.clone();
+            variation.remove(i);
+            variation
+        })
+        .collect()
 }
 
 fn get_reports() -> Vec<Vec<u32>> {
@@ -29,7 +43,13 @@ fn get_reports() -> Vec<Vec<u32>> {
     let lines = input.lines();
 
     // convert each line to a u32
-    let reports: Vec<Vec<u32>> = lines.map(|line| line.split_whitespace().map(|token| token.parse().unwrap()).collect()).collect();
+    let reports: Vec<Vec<u32>> = lines
+        .map(|line| {
+            line.split_whitespace()
+                .map(|token| token.parse().unwrap())
+                .collect()
+        })
+        .collect();
 
     reports
 }
@@ -74,5 +94,6 @@ fn is_report_safe(report: &Vec<u32>) -> bool {
         }
         max_diff = max_diff.max(a.abs_diff(b));
     }
-    (behaviour == ReportBehaviour::Increasing || behaviour == ReportBehaviour::Decreasing) && max_diff <= 3
+    (behaviour == ReportBehaviour::Increasing || behaviour == ReportBehaviour::Decreasing)
+        && max_diff <= 3
 }
