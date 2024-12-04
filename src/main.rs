@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     println!(
@@ -20,5 +21,9 @@ fn main() {
     println!(
         "day 3, result of conditional multiplications: {:?}",
         day3::add_results_of_conditional_multiplications()
+    );
+    println!(
+        "day 4, count of XMAS appearances: {:?}",
+        day4::count_of_xmas_appearances()
     );
 }
