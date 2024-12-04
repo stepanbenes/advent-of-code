@@ -66,6 +66,57 @@ pub fn count_of_xmas_appearances() -> usize {
     total_count
 }
 
+pub fn count_of_x_mas_appearances() -> usize {
+    let input = read_input();
+    //let input = read_test_input();
+
+    let check_mas_fn = |i: usize, j: usize| {
+        const MAS: &str = "MAS";
+        if i == 0 || j == 0 {
+            return false;
+        }
+        if i == input.len() - 1 || j == input[0].len() - 1 {
+            return false;
+        }
+        let a1 = format!(
+            "{}{}{}",
+            input[i - 1][j - 1] as char,
+            input[i][j] as char,
+            input[i + 1][j + 1] as char
+        );
+        let a2 = format!(
+            "{}{}{}",
+            input[i + 1][j + 1] as char,
+            input[i][j] as char,
+            input[i - 1][j - 1] as char
+        );
+        let b1 = format!(
+            "{}{}{}",
+            input[i - 1][j + 1] as char,
+            input[i][j] as char,
+            input[i + 1][j - 1] as char
+        );
+        let b2 = format!(
+            "{}{}{}",
+            input[i + 1][j - 1] as char,
+            input[i][j] as char,
+            input[i - 1][j + 1] as char
+        );
+        (a1 == MAS || a2 == MAS) && (b1 == MAS || b2 == MAS)
+    };
+
+    let mut count = 0;
+    for (r, line) in input.iter().enumerate() {
+        for c in 0..line.len() {
+            if check_mas_fn(r, c) {
+                count += 1;
+            }
+        }
+    }
+
+    count
+}
+
 fn read_input() -> Vec<Vec<u8>> {
     let input = include_str!("../input/day4.txt");
     input.lines().map(|line| line.as_bytes().to_vec()).collect()

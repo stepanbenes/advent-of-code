@@ -26,4 +26,8 @@ fn main() {
         "day 4, count of XMAS appearances: {:?}",
         day4::count_of_xmas_appearances()
     );
+    println!(
+        "day 4, count of X-MAS appearances: {:?}",
+        day4::count_of_x_mas_appearances()
+    );
 }
