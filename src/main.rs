@@ -2,6 +2,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 fn main() {
     println!(
@@ -29,5 +30,9 @@ fn main() {
     println!(
         "day 4, count of X-MAS appearances: {:?}",
         day4::count_of_x_mas_appearances()
+    );
+    println!(
+        "day 5, sum of middle page numbers: {:?}",
+        day5::sum_of_middle_page_numbers()
     );
 }
