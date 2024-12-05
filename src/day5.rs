@@ -11,6 +11,45 @@ pub fn sum_of_middle_page_numbers() -> u32 {
     result
 }
 
+pub fn sum_of_middle_page_numbers_of_corrected_updates() -> u32 {
+    let ordering = get_ordering_input();
+    let updates = get_updates_input();
+    let incorectly_ordered_updates = updates
+        .iter()
+        .filter(|x| !check_update_is_in_correct_order(x, &ordering))
+        .collect::<Vec<_>>();
+    let result = incorectly_ordered_updates
+        .iter()
+        .map(|x| sort_update(x, &ordering))
+        .map(|x| get_middle_page_number(&x))
+        .sum();
+    result
+}
+
+fn sort_update(update: &[u32], ordering: &HashMap<u32, Vec<u32>>) -> Vec<u32> {
+    let mut sorted_update = update.to_owned();
+    sorted_update.sort_by(compare_pages(ordering));
+    return sorted_update;
+
+    fn compare_pages(
+        ordering: &HashMap<u32, Vec<u32>>,
+    ) -> impl FnMut(&u32, &u32) -> std::cmp::Ordering + '_ {
+        move |a, b| {
+            if let Some(pages_after) = ordering.get(a) {
+                if pages_after.contains(b) {
+                    return std::cmp::Ordering::Less;
+                }
+            }
+            if let Some(pages_after) = ordering.get(b) {
+                if pages_after.contains(a) {
+                    return std::cmp::Ordering::Greater;
+                }
+            }
+            std::cmp::Ordering::Equal
+        }
+    }
+}
+
 fn get_ordering_input() -> HashMap<u32, Vec<u32>> {
     //     let ordering_str = r"47|53
     // 97|13

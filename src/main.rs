@@ -35,4 +35,8 @@ fn main() {
         "day 5, sum of middle page numbers: {:?}",
         day5::sum_of_middle_page_numbers()
     );
+    println!(
+        "day 5, sum of middle page numbers of corrected updates: {:?}",
+        day5::sum_of_middle_page_numbers_of_corrected_updates()
+    );
 }
