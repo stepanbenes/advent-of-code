@@ -3,6 +3,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 fn main() {
     println!(
@@ -38,5 +39,9 @@ fn main() {
     println!(
         "day 5, sum of middle page numbers of corrected updates: {:?}",
         day5::sum_of_middle_page_numbers_of_corrected_updates()
+    );
+    println!(
+        "day 6, count of distinct positions in map: {:?}",
+        day6::count_of_distinct_positions_in_map()
     );
 }
