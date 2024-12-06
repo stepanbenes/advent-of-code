@@ -44,4 +44,8 @@ fn main() {
         "day 6, count of distinct positions in map: {:?}",
         day6::count_of_distinct_positions_in_map()
     );
+    println!(
+        "day 6, count of different positions for obstructions: {:?}",
+        day6::count_of_different_positions_for_obstructions()
+    );
 }
