@@ -53,6 +53,10 @@ fn main() {
     }
     println!(
         "day 7, total calibration result: {:?}",
-        day7::get_total_calibration_result()
+        day7::get_total_calibration_result(false)
+    );
+    println!(
+        "day 7, total calibration result with concatenation: {:?}",
+        day7::get_total_calibration_result(true)
     );
 }

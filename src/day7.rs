@@ -1,12 +1,13 @@
-pub fn get_total_calibration_result() -> u64 {
+pub fn get_total_calibration_result(with_concatanation: bool) -> u64 {
     let equations = get_input();
     equations
         .iter()
-        .filter(|equation| check_satisfiability(equation))
+        .filter(|equation| check_satisfiability(equation, with_concatanation))
         .map(|equation| equation.result)
         .sum()
 }
 
+#[derive(Debug)]
 struct Equation {
     result: u64,
     operands: Vec<u64>,
@@ -39,9 +40,13 @@ fn get_input() -> Vec<Equation> {
         .collect()
 }
 
-fn check_satisfiability(equation: &Equation) -> bool {
+fn check_satisfiability(equation: &Equation, with_concatanation: bool) -> bool {
     let Equation { result, operands } = equation;
-    calculate_equation_result(&operands[1..], operands[0], *result)
+    if with_concatanation {
+        calculate_equation_result_with_concatanation(&operands[1..], operands[0], *result)
+    } else {
+        calculate_equation_result(&operands[1..], operands[0], *result)
+    }
 }
 
 fn calculate_equation_result(operands: &[u64], running_result: u64, total_result: u64) -> bool {
@@ -52,4 +57,37 @@ fn calculate_equation_result(operands: &[u64], running_result: u64, total_result
                 || calculate_equation_result(rest, a * running_result, total_result)
         }
     }
+}
+
+fn calculate_equation_result_with_concatanation(
+    operands: &[u64],
+    running_result: u64,
+    total_result: u64,
+) -> bool {
+    match operands {
+        [] => running_result == total_result,
+        [a, rest @ ..] => {
+            calculate_equation_result_with_concatanation(rest, running_result + a, total_result)
+                || calculate_equation_result_with_concatanation(
+                    rest,
+                    running_result * a,
+                    total_result,
+                )
+                || calculate_equation_result_with_concatanation(
+                    rest,
+                    concetenate_numbers(running_result, *a),
+                    total_result,
+                )
+        }
+    }
+}
+
+pub fn concetenate_numbers(first: u64, second: u64) -> u64 {
+    let mut b = second;
+    let mut shift = 1;
+    while b > 0 {
+        shift *= 10;
+        b /= 10;
+    }
+    first * shift + second
 }
