@@ -73,4 +73,8 @@ fn main() {
         "day 9, filesystem checksum: {:?}",
         day9::get_filesystem_checksum()
     );
+    println!(
+        "day 9, filesystem checksum without fragmentation: {:?}",
+        day9::get_filesystem_checksum_without_fragmentation()
+    );
 }
