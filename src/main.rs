@@ -62,6 +62,10 @@ fn main() {
     }
     println!(
         "day 8, count of antinodes: {:?}",
-        day8::count_of_antinodes()
+        day8::count_of_antinodes(false)
+    );
+    println!(
+        "day 8, count of antinodes with resonant harmonics: {:?}",
+        day8::count_of_antinodes(true)
     );
 }

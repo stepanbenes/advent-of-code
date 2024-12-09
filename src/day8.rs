@@ -1,12 +1,16 @@
 use std::collections::{HashMap, HashSet};
 
-pub fn count_of_antinodes() -> usize {
+pub fn count_of_antinodes(use_resonant_harmonics: bool) -> usize {
     let input = get_input();
     let (map_width, map_height) = (input.len(), input[0].len());
     let antenna_positions = get_antenna_positions(&input);
     let mut all_antinode_positions = HashSet::new();
     for positions in antenna_positions.values() {
-        let antinode_positions = get_all_antinodes_positions(positions, map_width, map_height);
+        let antinode_positions = if use_resonant_harmonics {
+            get_all_antinodes_positions_with_resonant_harmonics(positions, map_width, map_height)
+        } else {
+            get_all_antinodes_positions(positions, map_width, map_height)
+        };
         for antinode_position in antinode_positions {
             all_antinode_positions.insert(antinode_position);
         }
@@ -42,10 +46,20 @@ fn get_input() -> Vec<Vec<char>> {
     // .........A..
     // ............
     // ............";
+    //     let input = r"T.........
+    // ...T......
+    // .T........
+    // ..........
+    // ..........
+    // ..........
+    // ..........
+    // ..........
+    // ..........
+    // ..........";
     input.lines().map(|line| line.chars().collect()).collect()
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 struct Position {
     row: usize,
     column: usize,
@@ -108,6 +122,51 @@ fn get_all_antinodes_positions(
                 column: second_antinode_position_column as usize,
             });
         }
+    }
+    antinode_positions
+}
+
+fn get_all_antinodes_positions_with_resonant_harmonics(
+    antenna_positions: &[Position],
+    map_width: usize,
+    map_height: usize,
+) -> Vec<Position> {
+    let antenna_pairs = find_all_antenna_pairs(antenna_positions);
+    let mut antinode_positions = vec![];
+    for (position, other_position) in antenna_pairs {
+        for antinode in get_all_antinodes_in_line(position, other_position, map_width, map_height) {
+            antinode_positions.push(antinode);
+        }
+    }
+    antinode_positions
+}
+
+fn get_all_antinodes_in_line(
+    a: &Position,
+    b: &Position,
+    map_width: usize,
+    map_height: usize,
+) -> Vec<Position> {
+    let row_diff: isize = a.row as isize - b.row as isize;
+    let column_diff: isize = a.column as isize - b.column as isize;
+    let mut antinode_positions = vec![];
+    let mut position = Position {
+        row: a.row,
+        column: a.column,
+    };
+    while position.row < map_height && position.column < map_width {
+        antinode_positions.push(position.clone());
+        position.row = (position.row as isize + row_diff) as usize;
+        position.column = (position.column as isize + column_diff) as usize;
+    }
+    position = Position {
+        row: b.row,
+        column: b.column,
+    };
+    while position.row < map_height && position.column < map_width {
+        antinode_positions.push(position.clone());
+        position.row = (position.row as isize - row_diff) as usize;
+        position.column = (position.column as isize - column_diff) as usize;
     }
     antinode_positions
 }
