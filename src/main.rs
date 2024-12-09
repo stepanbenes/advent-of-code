@@ -5,6 +5,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 fn main() {
     if cfg!(feature = "all_days") {
@@ -50,13 +51,17 @@ fn main() {
             "day 6, count of different positions for obstructions: {:?}",
             day6::count_of_different_positions_for_obstructions()
         );
+        println!(
+            "day 7, total calibration result: {:?}",
+            day7::get_total_calibration_result(false)
+        );
+        println!(
+            "day 7, total calibration result with concatenation: {:?}",
+            day7::get_total_calibration_result(true)
+        );
     }
     println!(
-        "day 7, total calibration result: {:?}",
-        day7::get_total_calibration_result(false)
-    );
-    println!(
-        "day 7, total calibration result with concatenation: {:?}",
-        day7::get_total_calibration_result(true)
+        "day 8, count of antinodes: {:?}",
+        day8::count_of_antinodes()
     );
 }
