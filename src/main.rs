@@ -6,6 +6,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
 fn main() {
     if cfg!(feature = "all_days") {
@@ -59,13 +60,17 @@ fn main() {
             "day 7, total calibration result with concatenation: {:?}",
             day7::get_total_calibration_result(true)
         );
+        println!(
+            "day 8, count of antinodes: {:?}",
+            day8::count_of_antinodes(false)
+        );
+        println!(
+            "day 8, count of antinodes with resonant harmonics: {:?}",
+            day8::count_of_antinodes(true)
+        );
     }
     println!(
-        "day 8, count of antinodes: {:?}",
-        day8::count_of_antinodes(false)
-    );
-    println!(
-        "day 8, count of antinodes with resonant harmonics: {:?}",
-        day8::count_of_antinodes(true)
+        "day 9, filesystem checksum: {:?}",
+        day9::get_filesystem_checksum()
     );
 }
