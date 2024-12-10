@@ -1,20 +1,23 @@
 use std::collections::HashSet;
 
-pub fn get_sum_of_all_trailhead_scores() -> u32 {
+pub fn get_sum_of_all_trailhead_scores() -> (u32, u32) {
     let map = get_topographic_map();
     let trailheads = get_all_trailheads(&map);
-    let mut score = 0;
+    let mut total_score = 0;
+    let mut total_rating = 0;
     for trailhead in &trailheads {
         println!("trailhead {:?}:", trailhead);
         let mut summits = HashSet::new();
-        walk_trailhead(trailhead, &map, &mut summits);
+        let rating = walk_trailhead(trailhead, &map, &mut summits);
         println!("summits:");
         for summit in &summits {
             println!("{:?}", summit);
         }
-        score += summits.len() as u32;
+        total_score += summits.len() as u32;
+        println!("rating: {}", rating);
+        total_rating += rating;
     }
-    score
+    (total_score, total_rating)
 }
 
 fn get_topographic_map() -> Vec<Vec<u8>> {
@@ -30,7 +33,7 @@ fn get_topographic_map() -> Vec<Vec<u8>> {
     // 7.....7
     // 8.....8
     // 9.....9";
-    // let input = r"..90..9
+    //     let input = r"..90..9
     // ...1.98
     // ...2..7
     // 6543456
@@ -44,6 +47,27 @@ fn get_topographic_map() -> Vec<Vec<u8>> {
     // ...8..3
     // ...9..2
     // .....01";
+    // let input = r"89010123
+    // 78121874
+    // 87430965
+    // 96549874
+    // 45678903
+    // 32019012
+    // 01329801
+    // 10456732";
+    //     let input = r".....0.
+    // ..4321.
+    // ..5..2.
+    // ..6543.
+    // ..7..4.
+    // ..8765.
+    // ..9....";
+    // let input = r"012345
+    // 123456
+    // 234567
+    // 345678
+    // 4.6789
+    // 56789.";
     // let input = r"89010123
     // 78121874
     // 87430965
@@ -83,18 +107,25 @@ fn get_all_trailheads(map: &[Vec<u8>]) -> Vec<Position> {
     trailheads
 }
 
-fn walk_trailhead(current_position: &Position, map: &[Vec<u8>], summits: &mut HashSet<Position>) {
+fn walk_trailhead(
+    current_position: &Position,
+    map: &[Vec<u8>],
+    summits: &mut HashSet<Position>,
+) -> u32 {
     let current_height = map[current_position.row][current_position.column];
     if current_height == 9 {
         summits.insert(current_position.clone());
-        return;
+        return 1;
     }
+    let mut rating_sum = 0;
     for neighbor in get_neighbors(current_position, map[0].len(), map.len()) {
         let neighbor_height = map[neighbor.row][neighbor.column];
         if neighbor_height == current_height + 1 {
-            walk_trailhead(&neighbor, map, summits);
+            let rating = walk_trailhead(&neighbor, map, summits);
+            rating_sum += rating;
         }
     }
+    rating_sum
 }
 
 fn get_neighbors(position: &Position, map_width: usize, map_height: usize) -> Vec<Position> {

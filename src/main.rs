@@ -78,8 +78,7 @@ fn main() {
             day9::get_filesystem_checksum_without_fragmentation()
         );
     }
-    println!(
-        "day 10, sum of all trailhead scores: {:?}",
-        day10::get_sum_of_all_trailhead_scores()
-    );
+    let (score, rating) = day10::get_sum_of_all_trailhead_scores();
+    println!("day 10, sum of all trailhead scores: {:?}", score);
+    println!("day 10, sum of all trailhead ratings: {:?}", rating);
 }
