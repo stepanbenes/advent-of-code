@@ -1,4 +1,5 @@
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -68,13 +69,17 @@ fn main() {
             "day 8, count of antinodes with resonant harmonics: {:?}",
             day8::count_of_antinodes(true)
         );
+        println!(
+            "day 9, filesystem checksum: {:?}",
+            day9::get_filesystem_checksum()
+        );
+        println!(
+            "day 9, filesystem checksum without fragmentation: {:?}",
+            day9::get_filesystem_checksum_without_fragmentation()
+        );
     }
     println!(
-        "day 9, filesystem checksum: {:?}",
-        day9::get_filesystem_checksum()
-    );
-    println!(
-        "day 9, filesystem checksum without fragmentation: {:?}",
-        day9::get_filesystem_checksum_without_fragmentation()
+        "day 10, sum of all trailhead scores: {:?}",
+        day10::get_sum_of_all_trailhead_scores()
     );
 }
