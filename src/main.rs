@@ -1,5 +1,3 @@
-#![feature(linked_list_cursors)]
-
 mod day1;
 mod day10;
 mod day11;
@@ -84,5 +82,12 @@ fn main() {
         println!("day 10, sum of all trailhead scores: {:?}", score);
         println!("day 10, sum of all trailhead ratings: {:?}", rating);
     }
-    println!("day 11, count of stones: {:?}", day11::count_of_stones());
+    println!(
+        "day 11, count of stones after 25 blinks: {:?}",
+        day11::count_of_stones::<25>()
+    );
+    println!(
+        "day 11, count of stones after 75 blinks: {:?}",
+        day11::count_of_stones::<75>()
+    );
 }

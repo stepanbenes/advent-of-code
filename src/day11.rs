@@ -1,52 +1,72 @@
-use std::collections::LinkedList;
+use std::collections::HashMap;
 
-pub fn count_of_stones() -> u32 {
-    let mut stones = get_input();
-    // TODO: use Linked list instead of Vec
-
+pub fn count_of_stones<const STEP_COUNT: usize>() -> u64 {
+    let stones = get_input();
+    let mut table: HashMap<u64, [u64; STEP_COUNT]> = HashMap::new();
     //println!("{:?}", stones);
-    for i in 1..=25 {
-        blink(&mut stones);
-        //println!("{:?}", stones);
-        println!("{i}: {:?}", stones.len());
+    let mut total_count = 0;
+    for stone in stones {
+        let count = blink(stone, 0, &mut table);
+        total_count += count;
     }
-    stones.len() as u32
+    total_count
 }
 
-fn get_input() -> LinkedList<u64> {
+fn get_input() -> Vec<u64> {
     //let input = "0 1 10 99 999";
     //let input = "125 17";
     let input = "112 1110 163902 0 7656027 83039 9 74";
-    let mut stones = LinkedList::new();
-    for stone in input.split_whitespace() {
-        stones.push_back(stone.parse::<u64>().unwrap());
-    }
-    stones
+    input
+        .split_whitespace()
+        .map(|s| s.parse().unwrap())
+        .collect()
 }
 
-fn blink(stones: &mut LinkedList<u64>) {
-    let mut cursor = stones.cursor_front_mut();
-    while let Some(current) = cursor.current() {
-        // 1. If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
-        if *current == 0 {
-            *current = 1;
-        }
-        // 2. If the stone is engraved with a number that has an even number of digits, it is replaced by two stones. The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
-        else if current.to_string().len() % 2 == 0 {
-            let mut digits = current.to_string();
-            let half = digits.len() / 2;
-            let left = digits.split_off(half);
-            let right = digits;
-            let left_value = left.parse::<u64>().unwrap();
-            let right_value = right.parse::<u64>().unwrap();
-            *current = left_value;
-            cursor.insert_after(right_value);
-            cursor.move_next();
-        }
-        // 3. If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
-        else {
-            *current *= 2024;
-        }
-        cursor.move_next();
+fn blink<const STEP_COUNT: usize>(
+    stone: u64,
+    depth: usize,
+    table: &mut HashMap<u64, [u64; STEP_COUNT]>,
+) -> u64 {
+    //println!("{:?} {:?}", stone, step_count);
+    // stop the recursion
+    if depth == STEP_COUNT {
+        return 1;
     }
+    // If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
+    if stone == 0 {
+        let new_stone_value = 1;
+        return table_lookup(new_stone_value, depth, table);
+    }
+    // If the stone is engraved with a number that has an even number of digits, it is replaced by two stones. The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
+    if stone.to_string().len() % 2 == 0 {
+        let stone_str = stone.to_string();
+        let half = stone_str.len() / 2;
+        let left = stone_str[..half].parse().unwrap();
+        let right = stone_str[half..].parse().unwrap();
+        return table_lookup(left, depth, table) + table_lookup(right, depth, table);
+    }
+    // If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
+    {
+        let new_stone_value = stone * 2024;
+        table_lookup(new_stone_value, depth, table)
+    }
+}
+
+fn table_lookup<const STEP_COUNT: usize>(
+    new_stone_value: u64,
+    depth: usize,
+    table: &mut HashMap<u64, [u64; STEP_COUNT]>,
+) -> u64 {
+    let mut value;
+    if let Some(table_row) = table.get_mut(&new_stone_value) {
+        value = table_row[depth];
+    } else {
+        table.insert(new_stone_value, [0; STEP_COUNT]);
+        value = 0;
+    }
+    if value == 0 {
+        value = blink(new_stone_value, depth + 1, table);
+        table.get_mut(&new_stone_value).unwrap()[depth] = value;
+    }
+    value
 }
