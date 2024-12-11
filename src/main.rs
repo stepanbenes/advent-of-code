@@ -1,5 +1,8 @@
+#![feature(linked_list_cursors)]
+
 mod day1;
 mod day10;
+mod day11;
 mod day2;
 mod day3;
 mod day4;
@@ -77,8 +80,9 @@ fn main() {
             "day 9, filesystem checksum without fragmentation: {:?}",
             day9::get_filesystem_checksum_without_fragmentation()
         );
+        let (score, rating) = day10::get_sum_of_all_trailhead_scores();
+        println!("day 10, sum of all trailhead scores: {:?}", score);
+        println!("day 10, sum of all trailhead ratings: {:?}", rating);
     }
-    let (score, rating) = day10::get_sum_of_all_trailhead_scores();
-    println!("day 10, sum of all trailhead scores: {:?}", score);
-    println!("day 10, sum of all trailhead ratings: {:?}", rating);
+    println!("day 11, count of stones: {:?}", day11::count_of_stones());
 }
