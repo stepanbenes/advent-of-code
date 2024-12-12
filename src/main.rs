@@ -91,8 +91,13 @@ fn main() {
             day11::count_of_stones::<75>()
         );
     }
+    let (total_segment_price, total_side_price) = day12::get_total_price_of_fencing();
     println!(
-        "day 12, total price of fencing: {:?}",
-        day12::get_total_price_of_fencing()
+        "day 12, total price of segment fencing: {:?}",
+        total_segment_price
+    );
+    println!(
+        "day 12, total price of side fencing: {:?}",
+        total_side_price
     );
 }
