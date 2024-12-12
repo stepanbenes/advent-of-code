@@ -1,6 +1,7 @@
 mod day1;
 mod day10;
 mod day11;
+mod day12;
 mod day2;
 mod day3;
 mod day4;
@@ -81,13 +82,17 @@ fn main() {
         let (score, rating) = day10::get_sum_of_all_trailhead_scores();
         println!("day 10, sum of all trailhead scores: {:?}", score);
         println!("day 10, sum of all trailhead ratings: {:?}", rating);
+        println!(
+            "day 11, count of stones after 25 blinks: {:?}",
+            day11::count_of_stones::<25>()
+        );
+        println!(
+            "day 11, count of stones after 75 blinks: {:?}",
+            day11::count_of_stones::<75>()
+        );
     }
     println!(
-        "day 11, count of stones after 25 blinks: {:?}",
-        day11::count_of_stones::<25>()
-    );
-    println!(
-        "day 11, count of stones after 75 blinks: {:?}",
-        day11::count_of_stones::<75>()
+        "day 12, total price of fencing: {:?}",
+        day12::get_total_price_of_fencing()
     );
 }
