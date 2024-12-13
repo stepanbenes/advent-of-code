@@ -2,6 +2,7 @@ mod day1;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 mod day2;
 mod day3;
 mod day4;
@@ -90,14 +91,18 @@ fn main() {
             "day 11, count of stones after 75 blinks: {:?}",
             day11::count_of_stones::<75>()
         );
+        let (total_segment_price, total_side_price) = day12::get_total_price_of_fencing();
+        println!(
+            "day 12, total price of segment fencing: {:?}",
+            total_segment_price
+        );
+        println!(
+            "day 12, total price of side fencing: {:?}",
+            total_side_price
+        );
     }
-    let (total_segment_price, total_side_price) = day12::get_total_price_of_fencing();
     println!(
-        "day 12, total price of segment fencing: {:?}",
-        total_segment_price
-    );
-    println!(
-        "day 12, total price of side fencing: {:?}",
-        total_side_price
+        "day 13, fewest tokens to win all possible prices: {:?}",
+        day13::fewest_tokens_to_win_all_possible_prices()
     );
 }
