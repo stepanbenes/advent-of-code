@@ -1,5 +1,11 @@
-pub fn fewest_tokens_to_win_all_possible_prices() -> i32 {
-    let machines = get_input();
+pub fn fewest_tokens_to_win_all_possible_prices(use_units_correction: bool) -> i64 {
+    let mut machines = get_input();
+    if use_units_correction {
+        for machine in machines.iter_mut() {
+            machine.price_location_x += 10000000000000;
+            machine.price_location_y += 10000000000000;
+        }
+    }
     let total_price = machines
         .iter()
         .filter_map(calculate_pushes)
@@ -10,13 +16,13 @@ pub fn fewest_tokens_to_win_all_possible_prices() -> i32 {
 
 #[derive(Debug, Default, Clone)]
 struct Machine {
-    a_x_increment: i32,
-    a_y_increment: i32,
-    b_x_increment: i32,
-    b_y_increment: i32,
+    a_x_increment: i64,
+    a_y_increment: i64,
+    b_x_increment: i64,
+    b_y_increment: i64,
 
-    price_location_x: i32,
-    price_location_y: i32,
+    price_location_x: i64,
+    price_location_y: i64,
 }
 
 fn get_input() -> Vec<Machine> {
@@ -65,11 +71,11 @@ fn get_input() -> Vec<Machine> {
     machines
 }
 
-fn calculate_price((a, b): (i32, i32)) -> i32 {
+fn calculate_price((a, b): (i64, i64)) -> i64 {
     a * 3 + b
 }
 
-fn calculate_pushes(machine: &Machine) -> Option<(i32, i32)> {
+fn calculate_pushes(machine: &Machine) -> Option<(i64, i64)> {
     let determinant = machine.a_x_increment * machine.b_y_increment
         - machine.a_y_increment * machine.b_x_increment;
     if determinant == 0 {

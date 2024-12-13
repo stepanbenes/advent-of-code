@@ -103,6 +103,10 @@ fn main() {
     }
     println!(
         "day 13, fewest tokens to win all possible prices: {:?}",
-        day13::fewest_tokens_to_win_all_possible_prices()
+        day13::fewest_tokens_to_win_all_possible_prices(false)
+    );
+    println!(
+        "day 13, fewest tokens to win all possible prices with units correction: {:?}",
+        day13::fewest_tokens_to_win_all_possible_prices(true)
     );
 }
