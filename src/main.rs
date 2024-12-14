@@ -3,6 +3,7 @@ mod day10;
 mod day11;
 mod day12;
 mod day13;
+mod day14;
 mod day2;
 mod day3;
 mod day4;
@@ -100,13 +101,17 @@ fn main() {
             "day 12, total price of side fencing: {:?}",
             total_side_price
         );
+        println!(
+            "day 13, fewest tokens to win all possible prices: {:?}",
+            day13::fewest_tokens_to_win_all_possible_prices(false)
+        );
+        println!(
+            "day 13, fewest tokens to win all possible prices with units correction: {:?}",
+            day13::fewest_tokens_to_win_all_possible_prices(true)
+        );
     }
     println!(
-        "day 13, fewest tokens to win all possible prices: {:?}",
-        day13::fewest_tokens_to_win_all_possible_prices(false)
-    );
-    println!(
-        "day 13, fewest tokens to win all possible prices with units correction: {:?}",
-        day13::fewest_tokens_to_win_all_possible_prices(true)
+        "day 14, safety factor: {:?}",
+        day14::calculate_safety_factor()
     );
 }
