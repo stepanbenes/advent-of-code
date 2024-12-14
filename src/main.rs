@@ -110,8 +110,11 @@ fn main() {
             day13::fewest_tokens_to_win_all_possible_prices(true)
         );
     }
+
     println!(
         "day 14, safety factor: {:?}",
         day14::calculate_safety_factor()
     );
+
+    day14::show_easter_egg();
 }
