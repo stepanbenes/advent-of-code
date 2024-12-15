@@ -4,6 +4,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 mod day2;
 mod day3;
 mod day4;
@@ -109,12 +110,17 @@ fn main() {
             "day 13, fewest tokens to win all possible prices with units correction: {:?}",
             day13::fewest_tokens_to_win_all_possible_prices(true)
         );
+
+        println!(
+            "day 14, safety factor: {:?}",
+            day14::calculate_safety_factor()
+        );
+
+        day14::show_easter_egg();
     }
 
     println!(
-        "day 14, safety factor: {:?}",
-        day14::calculate_safety_factor()
+        "day 15, sum of all boxes GPS coordinates: {:?}",
+        day15::sum_of_all_boxes_gps_coordinates()
     );
-
-    day14::show_easter_egg();
 }
