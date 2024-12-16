@@ -119,10 +119,10 @@ fn main() {
         day14::show_easter_egg();
     }
 
-    println!(
-        "day 15, sum of all boxes GPS coordinates: {:?}",
-        day15::sum_of_all_boxes_gps_coordinates(false)
-    );
+    // println!(
+    //     "day 15, sum of all boxes GPS coordinates: {:?}",
+    //     day15::sum_of_all_boxes_gps_coordinates(false)
+    // );
 
     println!(
         "day 15, sum of all boxes GPS coordinates on doubled map: {:?}",

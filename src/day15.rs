@@ -1,4 +1,4 @@
-//use crossterm::event;
+use crossterm::event;
 
 #[derive(Debug, Clone, Copy)]
 enum Direction {
@@ -58,7 +58,7 @@ impl Position {
 
 pub fn sum_of_all_boxes_gps_coordinates(use_double_map: bool) -> u64 {
     let mut map = get_map();
-    let moves = get_moves();
+    let _moves = get_moves();
 
     if use_double_map {
         map = double_map(&map);
@@ -68,46 +68,46 @@ pub fn sum_of_all_boxes_gps_coordinates(use_double_map: bool) -> u64 {
 
     let mut robot_position = find_robot_position(&map);
 
-    for direction in moves {
-        if is_allowed_to_move(&map, robot_position, direction) {
-            move_object(&mut map, robot_position, direction);
-            map[robot_position.y][robot_position.x] = Location::Empty;
-            robot_position = robot_position.move_in_direction(direction);
-        }
-        //print_map(&map);
-    }
-
-    print_map(&map);
-
-    // loop {
-    //     let direction = loop {
-    //         if event::poll(std::time::Duration::from_millis(500)).unwrap() {
-    //             if let event::Event::Key(_key_event) = event::read().unwrap() {
-    //                 let key = event::read().unwrap();
-    //                 if let event::Event::Key(key) = key {
-    //                     match key.code {
-    //                         event::KeyCode::Up => break Direction::Up,
-    //                         event::KeyCode::Down => break Direction::Down,
-    //                         event::KeyCode::Left => break Direction::Left,
-    //                         event::KeyCode::Right => break Direction::Right,
-    //                         _ => (),
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     };
-
-    //     println!("direction: {:?}", direction);
+    // for direction in moves {
     //     if is_allowed_to_move(&map, robot_position, direction) {
-    //         //println!("next move: {:?}", direction);
     //         move_object(&mut map, robot_position, direction);
     //         map[robot_position.y][robot_position.x] = Location::Empty;
     //         robot_position = robot_position.move_in_direction(direction);
     //     }
-    //     print_map(&map);
+    //     //print_map(&map);
     // }
 
-    calculate_sum_of_all_boxes_gps_coordinates(&map)
+    // print_map(&map);
+
+    loop {
+        let direction = loop {
+            if event::poll(std::time::Duration::from_millis(500)).unwrap() {
+                if let event::Event::Key(_key_event) = event::read().unwrap() {
+                    let key = event::read().unwrap();
+                    if let event::Event::Key(key) = key {
+                        match key.code {
+                            event::KeyCode::Up => break Direction::Up,
+                            event::KeyCode::Down => break Direction::Down,
+                            event::KeyCode::Left => break Direction::Left,
+                            event::KeyCode::Right => break Direction::Right,
+                            _ => (),
+                        }
+                    }
+                }
+            }
+        };
+
+        println!("direction: {:?}", direction);
+        if is_allowed_to_move(&map, robot_position, direction) {
+            //println!("next move: {:?}", direction);
+            move_object(&mut map, robot_position, direction);
+            map[robot_position.y][robot_position.x] = Location::Empty;
+            robot_position = robot_position.move_in_direction(direction);
+        }
+        print_map(&map);
+    }
+
+    //calculate_sum_of_all_boxes_gps_coordinates(&map)
 }
 
 fn find_robot_position(map: &[Vec<Location>]) -> Position {
@@ -270,7 +270,7 @@ fn print_map(map: &Vec<Vec<Location>>) {
     }
 }
 
-fn calculate_sum_of_all_boxes_gps_coordinates(map: &[Vec<Location>]) -> u64 {
+fn _calculate_sum_of_all_boxes_gps_coordinates(map: &[Vec<Location>]) -> u64 {
     let mut sum = 0;
     for (y, line) in map.iter().enumerate() {
         for (x, location) in line.iter().enumerate() {
