@@ -5,6 +5,7 @@ mod day12;
 mod day13;
 mod day14;
 mod day15;
+mod day16;
 mod day2;
 mod day3;
 mod day4;
@@ -117,15 +118,20 @@ fn main() {
         );
 
         day14::show_easter_egg();
+
+        // println!(
+        //     "day 15, sum of all boxes GPS coordinates: {:?}",
+        //     day15::sum_of_all_boxes_gps_coordinates(false)
+        // );
+
+        println!(
+            "day 15, sum of all boxes GPS coordinates on doubled map: {:?}",
+            day15::sum_of_all_boxes_gps_coordinates(true)
+        );
     }
 
-    // println!(
-    //     "day 15, sum of all boxes GPS coordinates: {:?}",
-    //     day15::sum_of_all_boxes_gps_coordinates(false)
-    // );
-
     println!(
-        "day 15, sum of all boxes GPS coordinates on doubled map: {:?}",
-        day15::sum_of_all_boxes_gps_coordinates(true)
+        "day 16, lowest score a reindeer could possibly get: {:?}",
+        day16::lowest_score_a_reindeer_could_possibly_get()
     );
 }
