@@ -6,6 +6,7 @@ mod day13;
 mod day14;
 mod day15;
 mod day16;
+mod day17;
 mod day2;
 mod day3;
 mod day4;
@@ -128,11 +129,17 @@ fn main() {
             "day 15, sum of all boxes GPS coordinates on doubled map: {:?}",
             day15::sum_of_all_boxes_gps_coordinates(true)
         );
+
+        let (score, count_of_tiles_on_best_paths) =
+            day16::lowest_score_a_reindeer_could_possibly_get();
+
+        println!(
+            "day 16, lowest score a reindeer could possibly get: {score}, count of tiles on best paths: {count_of_tiles_on_best_paths}",        
+        );
     }
 
-    let (score, count_of_tiles_on_best_paths) = day16::lowest_score_a_reindeer_could_possibly_get();
-
     println!(
-        "day 16, lowest score a reindeer could possibly get: {score}, count of tiles on best paths: {count_of_tiles_on_best_paths}",        
+        "day 17, output of chronospacial computer program: {}",
+        day17::run_chronospacial_computer_program()
     );
 }
