@@ -130,8 +130,9 @@ fn main() {
         );
     }
 
+    let (score, count_of_tiles_on_best_paths) = day16::lowest_score_a_reindeer_could_possibly_get();
+
     println!(
-        "day 16, lowest score a reindeer could possibly get: {:?}",
-        day16::lowest_score_a_reindeer_could_possibly_get()
+        "day 16, lowest score a reindeer could possibly get: {score}, count of tiles on best paths: {count_of_tiles_on_best_paths}",        
     );
 }
