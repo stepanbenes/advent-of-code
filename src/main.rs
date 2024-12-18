@@ -142,4 +142,9 @@ fn main() {
         "day 17, output of chronospacial computer program: {}",
         day17::run_chronospacial_computer_program()
     );
+
+    println!(
+        "day 17, lowest positive value of register A to print copy of itself: {}",
+        day17::lowest_positive_value_of_register_a_to_print_copy_of_itself()
+    );
 }

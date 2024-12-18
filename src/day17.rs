@@ -1,14 +1,26 @@
 use itertools::Itertools;
+use rayon::prelude::*;
 
-#[derive(Debug)]
+#[derive(Clone)]
 struct Computer {
     instruction_pointer: usize,
-    register_a: i64,
-    register_b: i64,
-    register_c: i64,
+    register_a: u64,
+    register_b: u64,
+    register_c: u64,
 }
 
-#[derive(Debug)]
+impl std::fmt::Debug for Computer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Computer")
+            .field("instruction_pointer", &self.instruction_pointer)
+            .field("register_a", &format_args!("{:o}", self.register_a))
+            .field("register_b", &format_args!("{:o}", self.register_b))
+            .field("register_c", &format_args!("{:o}", self.register_c))
+            .finish()
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 #[allow(non_camel_case_types)]
 enum InstructionType {
     adv = 0,
@@ -46,7 +58,7 @@ struct Instruction {
 }
 
 impl Instruction {
-    fn get_combo_operand_value(&self, computer: &Computer) -> i64 {
+    fn get_combo_operand_value(&self, computer: &Computer) -> u64 {
         match self.operand {
             0 => 0,
             1 => 1,
@@ -60,8 +72,8 @@ impl Instruction {
         }
     }
 
-    fn get_literal_operand_value(&self) -> i64 {
-        self.operand as i64
+    fn get_literal_operand_value(&self) -> u64 {
+        self.operand as u64
     }
 }
 
@@ -70,7 +82,132 @@ type Program = Vec<Instruction>;
 pub fn run_chronospacial_computer_program() -> String {
     let (mut computer, program) = get_input();
     println!("Computer: {:?}, Program: {:?}", computer, program);
-    run_program(&mut computer, &program)
+    run_program(&mut computer, &program).iter().join(",")
+}
+
+pub fn lowest_positive_value_of_register_a_to_print_copy_of_itself() -> u64 {
+    let (_, program) = get_input();
+
+    search_a(
+        &mut Computer {
+            register_a: 0,
+            register_b: 0,
+            register_c: 0,
+            instruction_pointer: 0,
+        },
+        (program.len() * 2) - 1,
+        &program,
+    )
+    .unwrap()
+
+    // let program_input: Vec<u64> = program.iter().flat_map(|inst| [inst.operation as u8 as u64, inst.operand as u64]).collect();
+    // println!("Program input: {}", program_input.iter().join(","));
+    // for register_a in (105843716614554..) {
+    //     computer.register_a = register_a;
+    //     computer.register_b = 0;
+    //     computer.register_c = 0;
+    //     computer.instruction_pointer = 0;
+    //     let program_output = run_program(&mut computer, &program);
+    //     //if register_a % 500000 == 0 {
+    //         // println!("Testing register A: {:o}", register_a);
+    //         // println!("Program output: {}", program_output);
+    //         // println!();
+    //     //}
+    //     if program_output == program_input {
+    //         return register_a;
+    //     }
+    // }
+    // 0
+}
+
+fn search_a(memory: &mut Computer, iteration: usize, program: &Program) -> Option<u64> {
+    for remainder in 0..8 {
+        let multiplier = 8u64.pow(iteration as u32);
+
+        if memory.register_a + multiplier * remainder < 8u64.pow(program.len() as u32 - 1) {
+            continue;
+        }
+
+        let result = run_program(
+            &mut Computer {
+                register_a: memory.register_a + multiplier * remainder,
+                register_b: memory.register_b,
+                register_c: memory.register_c,
+                instruction_pointer: 0,
+            },
+            program,
+        );
+
+        if result[iteration]
+            == program
+                .iter()
+                .flat_map(|int| [int.operation as u8 as u64, int.operand as u64])
+                .collect::<Vec<_>>()[iteration]
+        {
+            return if iteration == 0 {
+                Some(memory.register_a + multiplier * remainder)
+            } else if let Some(register_a) = search_a(
+                &mut Computer {
+                    register_a: memory.register_a + multiplier * remainder,
+                    register_b: memory.register_b,
+                    register_c: memory.register_c,
+                    instruction_pointer: 0,
+                },
+                iteration - 1,
+                program,
+            ) {
+                Some(register_a)
+            } else {
+                continue;
+            };
+        }
+    }
+
+    None
+}
+
+pub fn _lowest_positive_value_of_register_a_to_print_copy_of_itself_parallel() -> u64 {
+    let (computer_template, program) = get_input();
+    let program_input: Vec<u64> = program
+        .iter()
+        .flat_map(|inst| [inst.operation as u8 as u64, inst.operand as u64])
+        .collect();
+    println!("Test value: {}", program_input.iter().join(","));
+
+    // Determine the number of threads to use
+    let num_threads = rayon::current_num_threads();
+    println!("Number of threads: {}", num_threads);
+    // Parallel search across multiple threads
+    let result = (0..num_threads).into_par_iter().find_map_any(|thread_id| {
+        println!("Thread {} started", thread_id);
+        // Each thread searches a different segment of numbers
+        let mut current = thread_id as u64;
+        loop {
+            if current % num_threads as u64 == thread_id as u64 {
+                if current % (13 * 17 * 23 * 29 * 31) == 0 {
+                    println!("Testing register A: {} (thread {})", current, thread_id);
+                }
+
+                // Create a clone of the computer for each iteration
+                let mut computer = computer_template.clone();
+                computer.register_a = current;
+                computer.register_b = 0;
+                computer.register_c = 0;
+                computer.instruction_pointer = 0;
+
+                let program_output = run_program(&mut computer, &program);
+
+                if program_output == program_input {
+                    return Some(current);
+                }
+            }
+
+            // Increment by number of threads to ensure even distribution
+            current += num_threads as u64;
+        }
+    });
+
+    result.unwrap_or(0)
 }
 
 fn get_input() -> (Computer, Program) {
@@ -80,6 +217,11 @@ fn get_input() -> (Computer, Program) {
     // Register C: 0
 
     // Program: 0,1,5,4,3,0";
+    //     let input = r"Register A: 2024
+    // Register B: 0
+    // Register C: 0
+
+    // Program: 0,3,5,4,3,0";
 
     let mut register_a = 0;
     let mut register_b = 0;
@@ -122,9 +264,12 @@ fn get_input() -> (Computer, Program) {
     )
 }
 
-fn run_program(computer: &mut Computer, program: &Program) -> String {
-    let mut output = Vec::<u8>::new();
+fn run_program(computer: &mut Computer, program: &Program) -> Vec<u64> {
+    let mut output = Vec::<u64>::new();
     loop {
+        if computer.instruction_pointer >= program.len() {
+            break;
+        }
         let instruction = &program[computer.instruction_pointer];
         match instruction.operation {
             InstructionType::adv => {
@@ -132,7 +277,7 @@ fn run_program(computer: &mut Computer, program: &Program) -> String {
                 // The denominator is found by raising 2 to the power of the instruction's combo operand.
                 // (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
                 // The result of the division operation is truncated to an integer and then written to the A register.
-                let denominator = 2_i64.pow(instruction.get_combo_operand_value(computer) as u32);
+                let denominator = 2_u64.pow(instruction.get_combo_operand_value(computer) as u32);
                 computer.register_a /= denominator;
                 computer.instruction_pointer += 1;
             }
@@ -166,27 +311,24 @@ fn run_program(computer: &mut Computer, program: &Program) -> String {
                 // The out instruction (opcode 5) calculates the value of its combo operand modulo 8, then outputs that value.
                 // (If a program outputs multiple values, they are separated by commas.)
                 let output_value = instruction.get_combo_operand_value(computer) % 8;
-                output.push(output_value as u8);
+                output.push(output_value);
                 computer.instruction_pointer += 1;
             }
             InstructionType::bdv => {
                 // The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register.
                 // (The numerator is still read from the A register.)
-                let denominator = 2_i64.pow(instruction.get_combo_operand_value(computer) as u32);
+                let denominator = 2_u64.pow(instruction.get_combo_operand_value(computer) as u32);
                 computer.register_b = computer.register_a / denominator;
                 computer.instruction_pointer += 1;
             }
             InstructionType::cdv => {
                 // The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
                 // (The numerator is still read from the A register.)
-                let denominator = 2_i64.pow(instruction.get_combo_operand_value(computer) as u32);
+                let denominator = 2_u64.pow(instruction.get_combo_operand_value(computer) as u32);
                 computer.register_c = computer.register_a / denominator;
                 computer.instruction_pointer += 1;
             }
         }
-        if computer.instruction_pointer >= program.len() {
-            break;
-        }
     }
-    output.iter().join(",")
+    output
 }
