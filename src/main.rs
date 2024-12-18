@@ -7,6 +7,7 @@ mod day14;
 mod day15;
 mod day16;
 mod day17;
+mod day18;
 mod day2;
 mod day3;
 mod day4;
@@ -136,15 +137,20 @@ fn main() {
         println!(
             "day 16, lowest score a reindeer could possibly get: {score}, count of tiles on best paths: {count_of_tiles_on_best_paths}",        
         );
+
+        println!(
+            "day 17, output of chronospacial computer program: {}",
+            day17::run_chronospacial_computer_program()
+        );
+
+        println!(
+            "day 17, lowest positive value of register A to print copy of itself: {}",
+            day17::lowest_positive_value_of_register_a_to_print_copy_of_itself()
+        );
     }
 
     println!(
-        "day 17, output of chronospacial computer program: {}",
-        day17::run_chronospacial_computer_program()
-    );
-
-    println!(
-        "day 17, lowest positive value of register A to print copy of itself: {}",
-        day17::lowest_positive_value_of_register_a_to_print_copy_of_itself()
+        "day 18, minimum steps to reach exit: {:?}",
+        day18::minimum_steps_to_reach_exit()
     );
 }
