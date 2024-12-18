@@ -77,12 +77,28 @@ impl Position {
 }
 
 pub fn minimum_steps_to_reach_exit() -> u32 {
-    let map = get_input();
+    let (map, _) = get_input();
     print_map_with_path(&map, &[]);
     let path = find_shortest_path(&map);
     println!();
     print_map_with_path(&map, &path);
     (path.len() - 1) as u32
+}
+
+pub fn get_first_byte_that_blocks_path() -> (usize, usize) {
+    let (mut map, remaining_bytes) = get_input();
+    print_map_with_path(&map, &[]);
+    for byte in remaining_bytes {
+        println!("Checking byte at {},{}", byte.x, byte.y);
+        map[byte.y][byte.x] = Location::Byte;
+        let path = find_shortest_path(&map);
+        println!();
+        print_map_with_path(&map, &path);
+        if path.is_empty() {
+            return (byte.x, byte.y);
+        }
+    }
+    (0, 0)
 }
 
 fn print_map_with_path(map: &[Vec<Location>], path: &[Position]) {
@@ -101,47 +117,53 @@ fn print_map_with_path(map: &[Vec<Location>], path: &[Position]) {
     }
 }
 
-fn get_input() -> Vec<Vec<Location>> {
-//     let byte_locations = r"5,4
-// 4,2
-// 4,5
-// 3,0
-// 2,1
-// 6,3
-// 2,4
-// 1,5
-// 0,6
-// 3,3
-// 2,6
-// 5,1
-// 1,2
-// 5,5
-// 2,5
-// 6,5
-// 1,4
-// 0,4
-// 6,4
-// 1,1
-// 6,1
-// 1,0
-// 0,5
-// 1,6
-// 2,0";
-//     let number_of_bytes = 12;
-//     let map_width = 7;
-//     let map_height = 7;
+fn get_input() -> (Vec<Vec<Location>>, Vec<Position>) {
+    //     let byte_locations = r"5,4
+    // 4,2
+    // 4,5
+    // 3,0
+    // 2,1
+    // 6,3
+    // 2,4
+    // 1,5
+    // 0,6
+    // 3,3
+    // 2,6
+    // 5,1
+    // 1,2
+    // 5,5
+    // 2,5
+    // 6,5
+    // 1,4
+    // 0,4
+    // 6,4
+    // 1,1
+    // 6,1
+    // 1,0
+    // 0,5
+    // 1,6
+    // 2,0";
+    //     let number_of_bytes = 12;
+    //     let map_width = 7;
+    //     let map_height = 7;
     let byte_locations = include_str!("../input/day18.txt");
     let number_of_bytes = 1024;
     let map_width = 71;
     let map_height = 71;
     let mut locations = vec![vec![Location::Empty; map_width]; map_height];
-    for line in byte_locations.lines().take(number_of_bytes) {
+    let mut remaining_bytes = Vec::new();
+    for (index, line) in byte_locations.lines().enumerate() {
         let mut parts = line.split(",");
         let x = parts.next().unwrap().parse::<usize>().unwrap();
         let y = parts.next().unwrap().parse::<usize>().unwrap();
-        locations[y][x] = Location::Byte;
+        if index < number_of_bytes {
+            locations[y][x] = Location::Byte;
+        } else {
+            remaining_bytes.push(Position { x, y });
+        }
     }
-    locations
+
+    (locations, remaining_bytes)
 }
 
 fn find_shortest_path(map: &[Vec<Location>]) -> Vec<Position> {

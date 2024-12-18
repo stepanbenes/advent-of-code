@@ -153,4 +153,7 @@ fn main() {
         "day 18, minimum steps to reach exit: {:?}",
         day18::minimum_steps_to_reach_exit()
     );
+
+    let (x, y) = day18::get_first_byte_that_blocks_path();
+    println!("day 18, first byte that blocks path: {x},{y}",);
 }
