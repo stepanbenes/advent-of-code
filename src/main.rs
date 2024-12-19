@@ -8,6 +8,7 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
+mod day19;
 mod day2;
 mod day3;
 mod day4;
@@ -147,13 +148,20 @@ fn main() {
             "day 17, lowest positive value of register A to print copy of itself: {}",
             day17::lowest_positive_value_of_register_a_to_print_copy_of_itself()
         );
+
+        println!(
+            "day 18, minimum steps to reach exit: {:?}",
+            day18::minimum_steps_to_reach_exit()
+        );
+
+        let (x, y) = day18::get_first_byte_that_blocks_path();
+        println!("day 18, first byte that blocks path: {x},{y}",);
     }
 
-    println!(
-        "day 18, minimum steps to reach exit: {:?}",
-        day18::minimum_steps_to_reach_exit()
-    );
+    let (possible_designs, possible_designs_combinations) = day19::count_of_possible_designs();
 
-    let (x, y) = day18::get_first_byte_that_blocks_path();
-    println!("day 18, first byte that blocks path: {x},{y}",);
+    println!(
+        "day 19, possible designs: {}, possible designs combinations: {}",
+        possible_designs, possible_designs_combinations
+    );
 }
