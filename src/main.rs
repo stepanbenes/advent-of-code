@@ -10,6 +10,7 @@ mod day17;
 mod day18;
 mod day19;
 mod day2;
+mod day20;
 mod day3;
 mod day4;
 mod day5;
@@ -156,12 +157,17 @@ fn main() {
 
         let (x, y) = day18::get_first_byte_that_blocks_path();
         println!("day 18, first byte that blocks path: {x},{y}",);
+
+        let (possible_designs, possible_designs_combinations) = day19::count_of_possible_designs();
+
+        println!(
+            "day 19, possible designs: {}, possible designs combinations: {}",
+            possible_designs, possible_designs_combinations
+        );
     }
 
-    let (possible_designs, possible_designs_combinations) = day19::count_of_possible_designs();
-
     println!(
-        "day 19, possible designs: {}, possible designs combinations: {}",
-        possible_designs, possible_designs_combinations
+        "day 20, count of cheats that save at least 100 picoseconds: {}",
+        day20::count_of_cheats_that_save_at_least_100_picoseconds()
     );
 }
