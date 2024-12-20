@@ -1,4 +1,5 @@
-use std::collections::{HashSet, VecDeque};
+use itertools::Itertools;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Direction {
@@ -43,46 +44,61 @@ impl Position {
             },
         }
     }
+
+    fn manhattan_distance_to(&self, other: Position) -> usize {
+        (self.x as isize - other.x as isize).unsigned_abs()
+            + (self.y as isize - other.y as isize).unsigned_abs()
+    }
 }
 
-pub fn count_of_cheats_that_save_at_least_100_picoseconds() -> usize {
+pub fn count_of_cheats_that_save_at_least_100_picoseconds(cheat_length: usize) -> usize {
     let map = get_input();
     print_map(&map);
     let start_position = find_start_position(&map);
     println!();
-    let paths = find_all_shortest_paths(&map, start_position);
-    for path in &paths {
-        println!("Path time: {}", path.len() - 1);
-    }
-    print_map_with_paths(&map, &paths);
-    let slowest_path_time = paths.iter().map(|path| path.len() - 1).max().unwrap();
-    paths
+    let path = find_shortest_path(&map, start_position).unwrap();
+
+    println!("Path time: {}", path.len() - 1);
+    //println!("Path: {:?}", path);
+    let all_path_lengths = get_all_path_lenghts_when_cheating(&path, cheat_length);
+    all_path_lengths
         .iter()
-        .filter(|path| slowest_path_time - (path.len() - 1) >= 100)
-        .count()
+        .sorted_by_key(|(length, _)| *length)
+        .rev()
+        .for_each(|(length, count)| {
+            println!(
+                "{} paths saves {} picoseconds",
+                count,
+                path.len() as isize - *length as isize
+            );
+        });
+    all_path_lengths
+        .iter()
+        .sorted_by_key(|(length, _)| *length)
+        .map(|(length, count)| (count, path.len() as isize - *length as isize))
+        .filter(|(_, length)| *length >= 100)
+        .map(|(count, _)| count)
+        .sum()
 }
 
-fn print_map_with_paths(map: &[Vec<Location>], paths: &[HashSet<Position>]) {
-    for (y, row) in map.iter().enumerate() {
-        for (x, cell) in row.iter().enumerate() {
-            if paths.iter().any(|path| path.contains(&Position { x, y })) {
-                match cell {
-                    Location::Wall => print!("*"),
-                    Location::Start => print!("S"),
-                    Location::End => print!("E"),
-                    Location::Empty => print!("0"),
-                }
-            } else {
-                match cell {
-                    Location::Wall => print!("#"),
-                    Location::Start => print!("S"),
-                    Location::End => print!("E"),
-                    Location::Empty => print!("."),
+fn get_all_path_lenghts_when_cheating(
+    path: &[Position],
+    cheat_length: usize,
+) -> HashMap<usize, usize> {
+    let mut path_lengths = HashMap::new();
+    for cheat_start in 0..path.len() {
+        for cheat_end in cheat_start + 4..path.len() {
+            let shortcut_length = path[cheat_start].manhattan_distance_to(path[cheat_end]);
+            if shortcut_length <= cheat_length {
+                let original_length = cheat_end - cheat_start;
+                if shortcut_length < original_length {
+                    let new_path_length = path.len() - (original_length - shortcut_length);
+                    *path_lengths.entry(new_path_length).or_insert(0) += 1;
                 }
             }
         }
-        println!();
     }
+    path_lengths
 }
 
 fn get_input() -> Vec<Vec<Location>> {
@@ -145,31 +161,18 @@ fn find_start_position(map: &[Vec<Location>]) -> Position {
 
 struct State {
     position: Position,
-    visited: HashSet<Position>,
-    cheat_used: bool,
 }
 
-fn find_all_shortest_paths(
-    map: &[Vec<Location>],
-    start_position: Position,
-) -> Vec<HashSet<Position>> {
-    let mut paths: Vec<HashSet<Position>> = Vec::new();
+fn find_shortest_path(map: &[Vec<Location>], start_position: Position) -> Option<Vec<Position>> {
+    let mut path: Vec<Position> = vec![start_position];
     let mut queue: VecDeque<State> = VecDeque::new();
+    let mut visited: HashSet<Position> = HashSet::new();
 
-    let mut start_path = HashSet::new();
-    start_path.insert(start_position);
     queue.push_back(State {
-        visited: start_path,
         position: start_position,
-        cheat_used: false,
     });
 
-    while let Some(State {
-        mut visited,
-        position,
-        cheat_used,
-    }) = queue.pop_front()
-    {
+    while let Some(State { position }) = queue.pop_front() {
         visited.insert(position);
         for direction in [
             Direction::East,
@@ -190,37 +193,24 @@ fn find_all_shortest_paths(
             }
             match map[new_position.y][new_position.x] {
                 Location::Wall => {
-                    //continue;
-                    if cheat_used {
-                        continue;
-                    }
-                    let mut new_visited = visited.clone();
-                    print!("{} ", new_visited.len());
-                    new_visited.insert(new_position);
-                    queue.push_back(State {
-                        visited: new_visited,
-                        position: new_position,
-                        cheat_used: true,
-                    });
+                    continue;
                 }
                 Location::End => {
-                    let mut new_visited = visited.clone();
-                    new_visited.insert(new_position);
-                    paths.push(new_visited);
-                    println!("Path found: {}", paths.len() - 1);
+                    visited.insert(new_position);
+                    path.push(new_position);
+                    return Some(path);
                 }
                 Location::Empty => {
-                    let mut new_visited = visited.clone();
-                    new_visited.insert(new_position);
+                    if visited.insert(new_position) {
+                        path.push(new_position);
+                    }
                     queue.push_back(State {
-                        visited: new_visited,
                         position: new_position,
-                        cheat_used,
                     });
                 }
                 Location::Start => panic!("Start position found in the middle of the map"),
             }
         }
     }
-    paths
+    None
 }

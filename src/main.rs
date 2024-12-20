@@ -167,7 +167,12 @@ fn main() {
     }
 
     println!(
-        "day 20, count of cheats that save at least 100 picoseconds: {}",
-        day20::count_of_cheats_that_save_at_least_100_picoseconds()
+        "day 20, count of cheats that save at least 100 picoseconds (cheat length = 2): {}",
+        day20::count_of_cheats_that_save_at_least_100_picoseconds(2)
+    );
+
+    println!(
+        "day 20, count of cheats that save at least 100 picoseconds (cheat length = 20): {}",
+        day20::count_of_cheats_that_save_at_least_100_picoseconds(20)
     );
 }
