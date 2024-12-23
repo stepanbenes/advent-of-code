@@ -1,27 +1,31 @@
-const MAX_DEPTH: usize = 3;
+use std::collections::HashMap;
 
-pub fn sum_of_code_complexities() -> u32 {
+const MAX_DEPTH: usize = 26;
+
+pub fn sum_of_code_complexities() -> u64 {
     let input = get_input();
     let mut keyboard_state = ['A'; MAX_DEPTH + 1];
     let mut complexity_sum = 0;
+    let mut memo: HashMap<(String, usize, char), usize> = HashMap::new();
     for code in input.iter() {
-        println!("Code: {:?}", code);
-        let shortest_path = get_all_sequences(code, MAX_DEPTH, &mut keyboard_state);
-        print_path(&shortest_path);
-        let numeric_part_of_code = code.iter().fold(0, |acc, c| {
+        println!("Code: {code}");
+        let shortest_path_length =
+            get_all_sequences(code, MAX_DEPTH, &mut keyboard_state, &mut memo);
+        //println!("{shortest_path}");
+        let numeric_part_of_code = code.chars().fold(0, |acc, c| {
             if let Some(value) = c.to_digit(10) {
                 acc * 10 + value
             } else {
                 acc
             }
         });
-        let complexity = shortest_path.len() as u32 * numeric_part_of_code;
+        let complexity = shortest_path_length as u64 * numeric_part_of_code as u64;
         complexity_sum += complexity;
     }
     complexity_sum
 }
 
-fn get_input() -> Vec<Vec<char>> {
+fn get_input() -> Vec<String> {
     let real_input = r"129A
 540A
 789A
@@ -32,60 +36,61 @@ fn get_input() -> Vec<Vec<char>> {
     // 179A
     // 456A
     // 379A";
-    real_input
-        .lines()
-        .map(|line| line.chars().collect())
-        .collect()
+    real_input.lines().map(|line| line.to_owned()).collect()
 }
 
 fn get_all_sequences(
-    start_path: &Vec<char>,
+    start_path: &String,
     depth: usize,
     keyboard_state: &mut [char; MAX_DEPTH + 1],
-) -> Vec<char> {
+    memo: &mut HashMap<(String, usize, char), usize>,
+) -> usize {
     if depth == 0 {
-        return start_path.clone();
+        return start_path.len();
     }
 
-    let mut result: Vec<char> = Vec::new();
-    for c in start_path {
+    if let Some(result) = memo.get(&(start_path.to_owned(), depth, keyboard_state[depth])) {
+        return *result;
+    }
+
+    let mut result_length: usize = 0;
+    for c in start_path.chars() {
+        if depth == MAX_DEPTH {
+            println!("{c}");
+        }
         let all_paths = find_all_paths(
             keyboard_state[depth],
-            *c,
+            c,
             if depth == MAX_DEPTH {
                 get_neighbors_for_numerical_keyboard
             } else {
                 get_neighbors_for_directional_keyboard
             },
         );
-        keyboard_state[depth] = *c;
+        keyboard_state[depth] = c;
 
-        let mut all_sub_paths: Vec<Vec<char>> = Vec::new();
+        let mut all_sub_paths: Vec<usize> = Vec::new();
         for path in all_paths {
             let next_level_path = get_next_level_path_from_path(&path);
-            let sub_path = get_all_sequences(&next_level_path, depth - 1, keyboard_state);
+            let sub_path = get_all_sequences(&next_level_path, depth - 1, keyboard_state, memo);
             all_sub_paths.push(sub_path);
         }
-        let shortest_sub_path = all_sub_paths
-            .iter()
-            .min_by(|a, b| a.len().cmp(&b.len()))
-            .unwrap();
-        result.extend(shortest_sub_path);
+        let shortest_sub_path_length = all_sub_paths.iter().min().unwrap();
+        result_length += shortest_sub_path_length;
     }
-    result
+
+    memo.insert(
+        (start_path.to_owned(), depth, keyboard_state[depth]),
+        result_length,
+    );
+
+    result_length
 }
 
-fn get_next_level_path_from_path(path: &[(char, char)]) -> Vec<char> {
-    let mut result: Vec<_> = path.iter().map(|(_, direction)| *direction).collect();
+fn get_next_level_path_from_path(path: &[(char, char)]) -> String {
+    let mut result: String = path.iter().map(|(_, direction)| *direction).collect();
     result.push('A');
     result
-}
-
-fn print_path(path: &[char]) {
-    for c in path {
-        print!("{}", c);
-    }
-    println!()
 }
 
 fn find_all_paths(
