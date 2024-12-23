@@ -12,6 +12,7 @@ mod day19;
 mod day2;
 mod day20;
 mod day21;
+mod day22;
 mod day3;
 mod day4;
 mod day5;
@@ -175,10 +176,15 @@ fn main() {
             "day 20, count of cheats that save at least 100 picoseconds (cheat length = 20): {}",
             day20::count_of_cheats_that_save_at_least_100_picoseconds(20)
         );
+
+        println!(
+            "day 21, sum of code complexities: {:?}",
+            day21::sum_of_code_complexities()
+        );
     }
 
     println!(
-        "day 21, sum of code complexities: {:?}",
-        day21::sum_of_code_complexities()
+        "day 22, sum of 2000th secret numbers: {}",
+        day22::sum_of_2000th_secret_numbers()
     );
 }
