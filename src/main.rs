@@ -13,6 +13,7 @@ mod day2;
 mod day20;
 mod day21;
 mod day22;
+mod day23;
 mod day3;
 mod day4;
 mod day5;
@@ -181,15 +182,20 @@ fn main() {
             "day 21, sum of code complexities: {:?}",
             day21::sum_of_code_complexities()
         );
+
+        println!(
+            "day 22, sum of 2000th secret numbers: {}",
+            day22::sum_of_2000th_secret_numbers()
+        );
+
+        println!(
+            "day 22, most bananas you can get: {}",
+            day22::most_bananas_you_can_get()
+        );
     }
 
     println!(
-        "day 22, sum of 2000th secret numbers: {}",
-        day22::sum_of_2000th_secret_numbers()
-    );
-
-    println!(
-        "day 22, most bananas you can get: {}",
-        day22::most_bananas_you_can_get()
+        "day 23, count of computers with name that starts with 't': {}",
+        day23::count_of_computers_with_name_that_starts_with_t()
     );
 }
