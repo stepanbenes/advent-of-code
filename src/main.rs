@@ -187,4 +187,9 @@ fn main() {
         "day 22, sum of 2000th secret numbers: {}",
         day22::sum_of_2000th_secret_numbers()
     );
+
+    println!(
+        "day 22, most bananas you can get: {}",
+        day22::most_bananas_you_can_get()
+    );
 }

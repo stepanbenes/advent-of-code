@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use itertools::Itertools;
+
 pub fn sum_of_2000th_secret_numbers() -> i64 {
     let input = get_input();
     let mut sum = 0;
@@ -13,7 +17,44 @@ pub fn sum_of_2000th_secret_numbers() -> i64 {
     sum
 }
 
+pub fn most_bananas_you_can_get() -> i64 {
+    let input = get_input();
+    let mut map: HashMap<(i8, i8, i8, i8), HashMap<usize, i8>> = HashMap::new();
+    for (buyers_index, buyers_number) in input.iter().enumerate() {
+        let mut secret_number = *buyers_number;
+        for ((a, _), (b, _), (c, _), (d, price)) in (0..2000)
+            .map(|_| {
+                let old_value = secret_number;
+                secret_number = get_next_secret_number(secret_number);
+                old_value
+            })
+            .map(|x| (x % 10) as i8)
+            .tuple_windows::<(_, _)>()
+            .map(|(a, b)| (b - a, b))
+            .tuple_windows::<(_, _, _, _)>()
+        {
+            //println!("{:?}: {:?}", (a, b, c, d), price);
+            let entry = map.entry((a, b, c, d)).or_default();
+            entry.entry(buyers_index).or_insert(price);
+        }
+    }
+
+    let max_item = map
+        .iter()
+        .map(|(key, value)| (key, value.values().map(|&p| p as i64).sum::<i64>()))
+        .max_by_key(|(_, value)| *value)
+        .unwrap();
+
+    println!("{:?}", max_item);
+    max_item.1
+}
+
 fn get_input() -> Vec<i64> {
+    //let input = "123";
+    //     let input = r"1
+    // 2
+    // 3
+    // 2024";
     let input = include_str!("../input/day22.txt");
     //     let input = r"1
     // 10
