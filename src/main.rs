@@ -198,4 +198,9 @@ fn main() {
         "day 23, count of computers with name that starts with 't': {}",
         day23::count_of_computers_with_name_that_starts_with_t()
     );
+
+    println!(
+        "day 23, password to LAN party: {}",
+        day23::password_to_lan_party()
+    );
 }
