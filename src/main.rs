@@ -204,12 +204,12 @@ fn main() {
             "day 23, password to LAN party: {}",
             day23::password_to_lan_party()
         );
-    }
 
-    println!(
-        "day 24, decimal output on the wires starting with z: {}",
-        day24::decimal_output_on_wires()
-    );
+        println!(
+            "day 24, decimal output on the wires starting with z: {}",
+            day24::decimal_output_on_wires()
+        );
+    }
 
     println!(
         "day 25, count of unique lock pin pairs that fit together without overlapping: {}",
