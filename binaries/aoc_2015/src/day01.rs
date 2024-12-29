@@ -47,77 +47,75 @@ impl Solver for Day01Solver {
 }
 
 #[cfg(test)]
-mod tests {
+mod part1_tests {
     use super::*;
-    mod part1 {
-        use super::*;
-        #[test]
-        fn floor_0_1() {
-            let result = Day01Solver::new("(())").solve_part_one();
-            assert_eq!(result, "0");
-        }
-
-        #[test]
-        fn floor_0_2() {
-            let result = Day01Solver::new("()()").solve_part_one();
-            assert_eq!(result, "0");
-        }
-
-        #[test]
-        fn floor_3_1() {
-            let result = Day01Solver::new("(((").solve_part_one();
-            assert_eq!(result, "3");
-        }
-
-        #[test]
-        fn floor_3_2() {
-            let result = Day01Solver::new("(()(()(").solve_part_one();
-            assert_eq!(result, "3");
-        }
-
-        #[test]
-        fn floor_3_3() {
-            let result = Day01Solver::new("))(((((").solve_part_one();
-            assert_eq!(result, "3");
-        }
-
-        #[test]
-        fn floor_neg1_1() {
-            let result = Day01Solver::new("())").solve_part_one();
-            assert_eq!(result, "-1");
-        }
-
-        #[test]
-        fn floor_neg1_2() {
-            let result = Day01Solver::new("))(").solve_part_one();
-            assert_eq!(result, "-1");
-        }
-
-        #[test]
-        fn floor_neg3_1() {
-            let result = Day01Solver::new(")))").solve_part_one();
-            assert_eq!(result, "-3");
-        }
-
-        #[test]
-        fn floor_neg3_2() {
-            let result = Day01Solver::new(")())())").solve_part_one();
-            assert_eq!(result, "-3");
-        }
+    #[test]
+    fn floor_0_1() {
+        let result = Day01Solver::new("(())").solve_part_one();
+        assert_eq!(result, "0");
     }
 
-    mod part2 {
-        use super::*;
-        #[test]
-        fn basement_1() {
-            let result = Day01Solver::new(")").solve_part_two();
-            assert_eq!(result, "1");
-        }
+    #[test]
+    fn floor_0_2() {
+        let result = Day01Solver::new("()()").solve_part_one();
+        assert_eq!(result, "0");
+    }
 
-        #[test]
-        fn basement_5() {
-            let result = Day01Solver::new("()())").solve_part_two();
-            assert_eq!(result, "5");
-        }
+    #[test]
+    fn floor_3_1() {
+        let result = Day01Solver::new("(((").solve_part_one();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn floor_3_2() {
+        let result = Day01Solver::new("(()(()(").solve_part_one();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn floor_3_3() {
+        let result = Day01Solver::new("))(((((").solve_part_one();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn floor_neg1_1() {
+        let result = Day01Solver::new("())").solve_part_one();
+        assert_eq!(result, "-1");
+    }
+
+    #[test]
+    fn floor_neg1_2() {
+        let result = Day01Solver::new("))(").solve_part_one();
+        assert_eq!(result, "-1");
+    }
+
+    #[test]
+    fn floor_neg3_1() {
+        let result = Day01Solver::new(")))").solve_part_one();
+        assert_eq!(result, "-3");
+    }
+
+    #[test]
+    fn floor_neg3_2() {
+        let result = Day01Solver::new(")())())").solve_part_one();
+        assert_eq!(result, "-3");
+    }
+}
+
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
+    #[test]
+    fn basement_1() {
+        let result = Day01Solver::new(")").solve_part_two();
+        assert_eq!(result, "1");
+    }
+
+    #[test]
+    fn basement_5() {
+        let result = Day01Solver::new("()())").solve_part_two();
+        assert_eq!(result, "5");
     }
 }

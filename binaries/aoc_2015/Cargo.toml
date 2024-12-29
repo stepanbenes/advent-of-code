@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 solver = { path = "../../crates/solver" }
+md5 = "0.7"

@@ -81,37 +81,35 @@ impl Solver for Day02Solver {
 }
 
 #[cfg(test)]
-mod tests {
+mod part1_tests {
     use super::*;
-    mod part1 {
-        use super::*;
 
-        #[test]
-        fn wrapping_paper_area_1() {
-            let result = Day02Solver::new("2x3x4").solve_part_one();
-            assert_eq!(result, "58");
-        }
-
-        #[test]
-        fn wrapping_paper_area_2() {
-            let result = Day02Solver::new("1x1x10").solve_part_one();
-            assert_eq!(result, "43");
-        }
+    #[test]
+    fn wrapping_paper_area_1() {
+        let result = Day02Solver::new("2x3x4").solve_part_one();
+        assert_eq!(result, "58");
     }
 
-    mod part2 {
-        use super::*;
+    #[test]
+    fn wrapping_paper_area_2() {
+        let result = Day02Solver::new("1x1x10").solve_part_one();
+        assert_eq!(result, "43");
+    }
+}
 
-        #[test]
-        fn ribbon_1() {
-            let result = Day02Solver::new("2x3x4").solve_part_two();
-            assert_eq!(result, "34");
-        }
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-        #[test]
-        fn ribbon_2() {
-            let result = Day02Solver::new("1x1x10").solve_part_two();
-            assert_eq!(result, "14");
-        }
+    #[test]
+    fn ribbon_1() {
+        let result = Day02Solver::new("2x3x4").solve_part_two();
+        assert_eq!(result, "34");
+    }
+
+    #[test]
+    fn ribbon_2() {
+        let result = Day02Solver::new("1x1x10").solve_part_two();
+        assert_eq!(result, "14");
     }
 }
