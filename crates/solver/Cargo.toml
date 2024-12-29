@@ -1,7 +1,6 @@
 [package]
-name = "aoc_2015"
+name = "solver"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-solver = { path = "../../crates/solver" }

@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/solver",
     "binaries/aoc_2015",
     "binaries/aoc_2024",
 ]
