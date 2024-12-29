@@ -1,5 +1,4 @@
 use solver::Solver;
-use md5;
 
 pub struct Day04Solver {
     input: &'static str,
