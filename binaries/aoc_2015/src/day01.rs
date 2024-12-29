@@ -1,26 +1,28 @@
 use solver::Solver;
 
-pub struct Day01Solver<'a> {
-    input: &'a str,
+pub struct Day01Solver {
+    input: &'static str,
 }
 
-impl<'a> Solver<'a> for Day01Solver<'a> {
-    type Part1Output = isize;
-    type Part2Output = isize;
-
-    fn new(input: &'a str) -> Self {
+impl Day01Solver {
+    pub fn new(input: &'static str) -> Self {
         Day01Solver { input }
     }
+}
 
-    fn solve_part_one(&self) -> Self::Part1Output {
-        self.input.chars().fold(0, |acc, c| match c {
-            '(' => acc + 1,
-            ')' => acc - 1,
-            _ => acc,
-        })
+impl Solver for Day01Solver {
+    fn solve_part_one(&self) -> String {
+        self.input
+            .chars()
+            .fold(0, |acc, c| match c {
+                '(' => acc + 1,
+                ')' => acc - 1,
+                _ => acc,
+            })
+            .to_string()
     }
 
-    fn solve_part_two(&self) -> Self::Part2Output {
+    fn solve_part_two(&self) -> String {
         let mut floor = 0;
         for (i, c) in self.input.chars().enumerate() {
             floor += match c {
@@ -29,10 +31,18 @@ impl<'a> Solver<'a> for Day01Solver<'a> {
                 _ => 0,
             };
             if floor == -1 {
-                return i as isize + 1;
+                return (i + 1).to_string();
             }
         }
         panic!("Basement not reached");
+    }
+
+    fn day_number(&self) -> usize {
+        1
+    }
+
+    fn description(&self) -> &'static str {
+        "Balancing parenthesis"
     }
 }
 
@@ -44,55 +54,55 @@ mod tests {
         #[test]
         fn floor_0_1() {
             let result = Day01Solver::new("(())").solve_part_one();
-            assert_eq!(result, 0);
+            assert_eq!(result, "0");
         }
 
         #[test]
         fn floor_0_2() {
             let result = Day01Solver::new("()()").solve_part_one();
-            assert_eq!(result, 0);
+            assert_eq!(result, "0");
         }
 
         #[test]
         fn floor_3_1() {
             let result = Day01Solver::new("(((").solve_part_one();
-            assert_eq!(result, 3);
+            assert_eq!(result, "3");
         }
 
         #[test]
         fn floor_3_2() {
             let result = Day01Solver::new("(()(()(").solve_part_one();
-            assert_eq!(result, 3);
+            assert_eq!(result, "3");
         }
 
         #[test]
         fn floor_3_3() {
             let result = Day01Solver::new("))(((((").solve_part_one();
-            assert_eq!(result, 3);
+            assert_eq!(result, "3");
         }
 
         #[test]
         fn floor_neg1_1() {
             let result = Day01Solver::new("())").solve_part_one();
-            assert_eq!(result, -1);
+            assert_eq!(result, "-1");
         }
 
         #[test]
         fn floor_neg1_2() {
             let result = Day01Solver::new("))(").solve_part_one();
-            assert_eq!(result, -1);
+            assert_eq!(result, "-1");
         }
 
         #[test]
         fn floor_neg3_1() {
             let result = Day01Solver::new(")))").solve_part_one();
-            assert_eq!(result, -3);
+            assert_eq!(result, "-3");
         }
 
         #[test]
         fn floor_neg3_2() {
             let result = Day01Solver::new(")())())").solve_part_one();
-            assert_eq!(result, -3);
+            assert_eq!(result, "-3");
         }
     }
 
@@ -101,13 +111,13 @@ mod tests {
         #[test]
         fn basement_1() {
             let result = Day01Solver::new(")").solve_part_two();
-            assert_eq!(result, 1);
+            assert_eq!(result, "1");
         }
 
         #[test]
         fn basement_5() {
             let result = Day01Solver::new("()())").solve_part_two();
-            assert_eq!(result, 5);
+            assert_eq!(result, "5");
         }
     }
 }

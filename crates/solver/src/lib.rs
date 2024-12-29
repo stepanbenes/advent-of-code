@@ -1,9 +1,14 @@
-pub trait Solver<'a> {
-    type Part1Output;
-    type Part2Output;
-    fn new(input: &'a str) -> Self;
-    fn solve_part_one(&self) -> Self::Part1Output;
-    fn solve_part_two(&self) -> Self::Part2Output;
+pub trait Solver {
+    fn solve_part_one(&self) -> String {
+        "".to_owned()
+    }
+    fn solve_part_two(&self) -> String {
+        "".to_owned()
+    }
+    fn day_number(&self) -> usize;
+    fn description(&self) -> &'static str {
+        ""
+    }
 }
 
 pub fn add(left: u64, right: u64) -> u64 {
