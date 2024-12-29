@@ -27,25 +27,22 @@ impl Solver for DayXXSolver {
 }
 
 #[cfg(test)]
-mod tests {
+mod part1_tests {
     use super::*;
-    mod part1 {
-        use super::*;
 
-        #[test]
-        fn test_1() {
-            let result = DayXXSolver::new("abc").solve_part_one();
-            assert_eq!(result, "0");
-        }
+    #[test]
+    fn test_1() {
+        let result = DayXXSolver::new("abc").solve_part_one();
+        assert_eq!(result, "0");
     }
+}
 
-    mod part2 {
-        use super::*;
+mod part2_tests {
+    use super::*;
 
-        #[test]
-        fn test_1() {
-            let result = DayXXSolver::new("abc").solve_part_two();
-            assert_eq!(result, "0");
-        }
+    #[test]
+    fn test_1() {
+        let result = DayXXSolver::new("abc").solve_part_two();
+        assert_eq!(result, "0");
     }
 }
