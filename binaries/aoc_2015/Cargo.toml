@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 solver = { path = "../../crates/solver" }
 md5 = "0.7"
+itertools = "0.13.0"
