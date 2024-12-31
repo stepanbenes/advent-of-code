@@ -37,6 +37,7 @@ mod part1_tests {
     }
 }
 
+#[cfg(test)]
 mod part2_tests {
     use super::*;
 

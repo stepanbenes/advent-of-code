@@ -119,7 +119,44 @@ impl Solver for Day06Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut grid = [[0u32; GRID_WIDTH]; GRID_HEIGHT];
+
+        for command in self.commands.iter() {
+            match command.action {
+                Action::TurnOn => {
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] += 1;
+                        }
+                    }
+                }
+                Action::TurnOff => {
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] = grid[i][j].checked_sub(1).unwrap_or(0);
+                        }
+                    }
+                }
+                Action::Toggle => {
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] += 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        fn count_brightness(grid: &[[u32; GRID_WIDTH]; GRID_HEIGHT]) -> usize {
+            let mut counter = 0;
+            for i in 0..GRID_HEIGHT {
+                for j in 0..GRID_WIDTH {
+                    counter += grid[i][j];
+                }
+            }
+            counter as usize
+        }
+        count_brightness(&grid).to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -165,12 +202,33 @@ turn off 499,499 through 500,500",
     }
 }
 
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Day06Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Day06Solver::new("toggle 0,0 through 999,999").solve_part_two();
+        assert_eq!(result, "2000000");
+    }
+
+    #[test]
+    fn test_2() {
+        let result = Day06Solver::new(r"turn on 0,0 through 0,0
+turn on 0,0 through 0,0
+turn on 0,0 through 0,0
+turn on 0,0 through 0,0
+turn on 0,0 through 0,0").solve_part_two();
+        assert_eq!(result, "5");
+    }
+
+    #[test]
+    fn test_3() {
+        let result = Day06Solver::new(r"turn on 0,0 through 0,0
+turn off 0,0 through 0,0
+turn on 0,0 through 0,0
+turn off 0,0 through 0,0
+toggle 0,0 through 0,0").solve_part_two();
+        assert_eq!(result, "2");
+    }
+}
