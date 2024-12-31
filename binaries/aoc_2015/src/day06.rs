@@ -15,7 +15,10 @@ struct Command {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-struct Position(isize, isize);
+struct Position {
+    x: usize,
+    y: usize,
+}
 
 const GRID_WIDTH: usize = 1000;
 const GRID_HEIGHT: usize = 1000;
@@ -31,18 +34,36 @@ impl Day06Solver {
             match &tokens[..] {
                 ["turn", "on", from_x, from_y, "through", to_x, to_y] => Command {
                     action: Action::TurnOn,
-                    from: Position(from_x.parse().unwrap(), from_y.parse().unwrap()),
-                    to: Position(to_x.parse().unwrap(), to_y.parse().unwrap()),
+                    from: Position {
+                        x: from_x.parse().unwrap(),
+                        y: from_y.parse().unwrap(),
+                    },
+                    to: Position {
+                        x: to_x.parse().unwrap(),
+                        y: to_y.parse().unwrap(),
+                    },
                 },
                 ["turn", "off", from_x, from_y, "through", to_x, to_y] => Command {
                     action: Action::TurnOff,
-                    from: Position(from_x.parse().unwrap(), from_y.parse().unwrap()),
-                    to: Position(to_x.parse().unwrap(), to_y.parse().unwrap()),
+                    from: Position {
+                        x: from_x.parse().unwrap(),
+                        y: from_y.parse().unwrap(),
+                    },
+                    to: Position {
+                        x: to_x.parse().unwrap(),
+                        y: to_y.parse().unwrap(),
+                    },
                 },
                 ["toggle", from_x, from_y, "through", to_x, to_y] => Command {
                     action: Action::Toggle,
-                    from: Position(from_x.parse().unwrap(), from_y.parse().unwrap()),
-                    to: Position(to_x.parse().unwrap(), to_y.parse().unwrap()),
+                    from: Position {
+                        x: from_x.parse().unwrap(),
+                        y: from_y.parse().unwrap(),
+                    },
+                    to: Position {
+                        x: to_x.parse().unwrap(),
+                        y: to_y.parse().unwrap(),
+                    },
                 },
                 _ => panic!("unexpected input"),
             }
@@ -60,13 +81,25 @@ impl Solver for Day06Solver {
         for command in self.commands.iter() {
             match command.action {
                 Action::TurnOn => {
-                    todo!()
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] = true;
+                        }
+                    }
                 }
                 Action::TurnOff => {
-                    todo!()
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] = false;
+                        }
+                    }
                 }
                 Action::Toggle => {
-                    todo!()
+                    for i in command.from.y..=command.to.y {
+                        for j in command.from.x..=command.to.x {
+                            grid[i][j] = !grid[i][j];
+                        }
+                    }
                 }
             }
         }
