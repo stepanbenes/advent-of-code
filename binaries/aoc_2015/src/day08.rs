@@ -8,6 +8,20 @@ impl Day08Solver {
     pub fn new(input: &'static str) -> Self {
         Day08Solver { input }
     }
+
+    pub fn encode(text: &'static str) -> String {
+        let mut encoded_text = String::new();
+        encoded_text.push('\"');
+        for c in text.chars() {
+            match c {
+                '\\' => encoded_text.push_str("\\\\"),
+                '\"' => encoded_text.push_str("\\\""),
+                _ => encoded_text.push(c),
+            }
+        }
+        encoded_text.push('\"');
+        encoded_text
+    }
 }
 
 impl Solver for Day08Solver {
@@ -46,7 +60,19 @@ impl Solver for Day08Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut old_char_count = 0;
+        let mut new_char_count = 0;
+        for line in self.input.lines() {
+            let bytes = line.as_bytes();
+            let length = bytes.len();
+            old_char_count += length;
+
+            let encoded_line = Day08Solver::encode(line);
+            let bytes = encoded_line.as_bytes();
+            let length = bytes.len();
+            new_char_count += length;
+        }
+        (new_char_count - old_char_count).to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -116,13 +142,31 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Day08Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Day08Solver::encode(r#""""#);
+        assert_eq!(result, r#""\"\"""#);
+    }
+
+    #[test]
+    fn test_2() {
+        let result = Day08Solver::encode(r#""abc""#);
+        assert_eq!(result, r#""\"abc\"""#);
+    }
+
+    #[test]
+    fn test_3() {
+        let result = Day08Solver::encode(r#""aaa\"aaa""#);
+        assert_eq!(result, r#""\"aaa\\\"aaa\"""#);
+    }
+
+    #[test]
+    fn test_4() {
+        let result = Day08Solver::encode(r#""\x27""#);
+        assert_eq!(result, r#""\"\\x27\"""#);
+    }
+}
