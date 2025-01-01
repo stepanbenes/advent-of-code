@@ -9,7 +9,9 @@ pub trait Solver {
     fn description(&self) -> &'static str {
         ""
     }
-    fn skip_run(&self) -> bool { false }
+    fn skip_run(&self) -> bool {
+        false
+    }
 }
 
 pub fn add(left: u64, right: u64) -> u64 {

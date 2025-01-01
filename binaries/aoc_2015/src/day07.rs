@@ -26,8 +26,7 @@ enum Instruction {
 impl Day07Solver {
     pub fn new(input: &'static str) -> Self {
         fn parse_wire_or_value(op: &'static str) -> WireOrValue {
-            op.parse()
-                .map_or(WireOrValue::Wire(op), WireOrValue::Value)
+            op.parse().map_or(WireOrValue::Wire(op), WireOrValue::Value)
         }
 
         fn parse_line(line: &'static str) -> (&'static str, Instruction) {
