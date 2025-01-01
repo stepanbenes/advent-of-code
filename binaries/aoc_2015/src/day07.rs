@@ -112,7 +112,15 @@ impl Solver for Day07Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        {
+            //_ = self.evaluate(self.instructions.get("a").unwrap(), "a");
+            let mut memo = self.memo.borrow_mut();
+            let a_signal = *memo.get("a").unwrap();
+            memo.clear();
+            memo.insert("b", a_signal);
+        }
+        let a_signal = self.evaluate(self.instructions.get("a").unwrap(), "a");
+        a_signal.to_string()
     }
 
     fn day_number(&self) -> usize {
