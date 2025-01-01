@@ -76,7 +76,7 @@ impl Day06Solver {
 
 impl Solver for Day06Solver {
     fn solve_part_one(&self) -> String {
-        let mut grid = [[false; GRID_WIDTH]; GRID_HEIGHT];
+        let mut grid = vec![vec![false; GRID_WIDTH]; GRID_HEIGHT];
 
         for command in self.commands.iter() {
             match command.action {
@@ -104,7 +104,7 @@ impl Solver for Day06Solver {
             }
         }
 
-        fn count_lights(grid: &[[bool; GRID_WIDTH]; GRID_HEIGHT]) -> usize {
+        fn count_lights(grid: &[Vec<bool>]) -> usize {
             let mut counter = 0;
             for i in 0..GRID_HEIGHT {
                 for j in 0..GRID_WIDTH {
@@ -119,7 +119,7 @@ impl Solver for Day06Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        let mut grid = [[0u32; GRID_WIDTH]; GRID_HEIGHT];
+        let mut grid = vec![vec![0u32; GRID_WIDTH]; GRID_HEIGHT];
 
         for command in self.commands.iter() {
             match command.action {
@@ -147,7 +147,7 @@ impl Solver for Day06Solver {
             }
         }
 
-        fn count_brightness(grid: &[[u32; GRID_WIDTH]; GRID_HEIGHT]) -> usize {
+        fn count_brightness(grid: &[Vec<u32>]) -> usize {
             let mut counter = 0;
             for i in 0..GRID_HEIGHT {
                 for j in 0..GRID_WIDTH {
