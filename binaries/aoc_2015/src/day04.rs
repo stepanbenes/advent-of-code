@@ -42,6 +42,10 @@ impl Solver for Day04Solver {
     fn description(&self) -> &'static str {
         "MD5 hashes"
     }
+
+    fn skip_run(&self) -> bool {
+        true // too slow
+    }
 }
 
 #[cfg(test)]

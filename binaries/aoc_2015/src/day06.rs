@@ -1,3 +1,4 @@
+#![allow(clippy::needless_range_loop)]
 use solver::Solver;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -133,7 +134,7 @@ impl Solver for Day06Solver {
                 Action::TurnOff => {
                     for i in command.from.y..=command.to.y {
                         for j in command.from.x..=command.to.x {
-                            grid[i][j] = grid[i][j].checked_sub(1).unwrap_or(0);
+                            grid[i][j] = grid[i][j].saturating_sub(1);
                         }
                     }
                 }
@@ -214,21 +215,27 @@ mod part2_tests {
 
     #[test]
     fn test_2() {
-        let result = Day06Solver::new(r"turn on 0,0 through 0,0
+        let result = Day06Solver::new(
+            r"turn on 0,0 through 0,0
 turn on 0,0 through 0,0
 turn on 0,0 through 0,0
 turn on 0,0 through 0,0
-turn on 0,0 through 0,0").solve_part_two();
+turn on 0,0 through 0,0",
+        )
+        .solve_part_two();
         assert_eq!(result, "5");
     }
 
     #[test]
     fn test_3() {
-        let result = Day06Solver::new(r"turn on 0,0 through 0,0
+        let result = Day06Solver::new(
+            r"turn on 0,0 through 0,0
 turn off 0,0 through 0,0
 turn on 0,0 through 0,0
 turn off 0,0 through 0,0
-toggle 0,0 through 0,0").solve_part_two();
+toggle 0,0 through 0,0",
+        )
+        .solve_part_two();
         assert_eq!(result, "2");
     }
 }
