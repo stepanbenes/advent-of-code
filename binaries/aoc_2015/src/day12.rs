@@ -2,19 +2,16 @@ use serde_json::Value;
 use solver::Solver;
 
 pub struct Day12Solver {
-    numbers: Vec<f64>,
+    json: Value,
 }
 
 impl Day12Solver {
     pub fn new(input: &'static str) -> Self {
         let parsed_json: Value = serde_json::from_str(input).expect("Invalid JSON");
-        let mut numbers = Vec::new();
-        Day12Solver::collect_numbers(&parsed_json, &mut numbers);
-        println!("{:?}", numbers);
-        Day12Solver { numbers }
+        Day12Solver { json: parsed_json }
     }
 
-    fn collect_numbers(json: &Value, numbers: &mut Vec<f64>) {
+    fn collect_numbers(json: &Value, numbers: &mut Vec<f64>, filter: Option<&'static str>) {
         match json {
             Value::Number(num) => {
                 if let Some(n) = num.as_f64() {
@@ -23,12 +20,14 @@ impl Day12Solver {
             }
             Value::Array(arr) => {
                 for item in arr {
-                    Day12Solver::collect_numbers(item, numbers);
+                    Day12Solver::collect_numbers(item, numbers, filter);
                 }
             }
             Value::Object(obj) => {
-                for (_, value) in obj {
-                    Day12Solver::collect_numbers(value, numbers);
+                if filter.is_none() || !obj.values().any(|value| value.as_str() == filter) {
+                    for (_, value) in obj {
+                        Day12Solver::collect_numbers(value, numbers, filter);
+                    }
                 }
             }
             _ => {}
@@ -38,12 +37,17 @@ impl Day12Solver {
 
 impl Solver for Day12Solver {
     fn solve_part_one(&self) -> String {
-        let sum = self.numbers.iter().sum::<f64>();
+        let mut numbers = Vec::new();
+        Day12Solver::collect_numbers(&self.json, &mut numbers, None);
+        let sum = numbers.iter().sum::<f64>();
         (sum as i64).to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut numbers = Vec::new();
+        Day12Solver::collect_numbers(&self.json, &mut numbers, Some("red"));
+        let sum = numbers.iter().sum::<f64>();
+        (sum as i64).to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -108,13 +112,37 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Day12Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Day12Solver::new(r#"[1,2,3]"#).solve_part_two();
+        assert_eq!(result, "6");
+    }
+
+    #[test]
+    fn test_2() {
+        let result = Day12Solver::new(r#"[1,{"c":"red","b":2},3]"#).solve_part_two();
+        assert_eq!(result, "4");
+    }
+
+    #[test]
+    fn test_3() {
+        let result = Day12Solver::new(r#"[[[3]]]"#).solve_part_two();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn test_4() {
+        let result = Day12Solver::new(r#"{"a":{"b":4},"c":-1}"#).solve_part_two();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn test_5() {
+        let result = Day12Solver::new(r#"{"d":"red","e":[1,2,3,4],"f":5}"#).solve_part_two();
+        assert_eq!(result, "0");
+    }
+}
