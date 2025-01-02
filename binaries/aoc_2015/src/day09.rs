@@ -3,10 +3,8 @@ use std::collections::HashMap;
 
 use solver::Solver;
 
-type City = &'static str;
-
 pub struct Day09Solver {
-    graph: HashMap<City, HashMap<City, u32>>,
+    pub graph: HashMap<&'static str, HashMap<&'static str, i32>>,
 }
 
 impl Day09Solver {
@@ -26,13 +24,15 @@ impl Day09Solver {
                     .insert(*city_from, distance);
             }
         }
-        println!("{:?}", graph);
         Day09Solver { graph }
     }
 
-    fn get_all_distances(&self) -> Vec<u32> {
+    pub fn get_all_distances(&self, return_to_start: bool) -> Vec<i32> {
         let mut distances = Vec::new();
-        for permutation in self.graph.keys().permutations(self.graph.len()) {
+        for mut permutation in self.graph.keys().permutations(self.graph.len()) {
+            if return_to_start {
+                permutation.push(permutation[0]);
+            }
             let mut total_distance = 0;
             for (&&city_from, &&city_to) in permutation.iter().tuple_windows() {
                 let distance = self.graph.get(city_from).unwrap().get(city_to).unwrap();
@@ -46,13 +46,13 @@ impl Day09Solver {
 
 impl Solver for Day09Solver {
     fn solve_part_one(&self) -> String {
-        let distances = self.get_all_distances();
+        let distances = self.get_all_distances(false);
         let shortest_distance = *distances.iter().min().unwrap();
         shortest_distance.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        let distances = self.get_all_distances();
+        let distances = self.get_all_distances(false);
         let longest_distance = *distances.iter().max().unwrap();
         longest_distance.to_string()
     }
