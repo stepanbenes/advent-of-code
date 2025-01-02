@@ -30,17 +30,18 @@ impl Day13Solver {
         Day13Solver { graph }
     }
 
-    fn get_max_happiness_seating(&self) -> (i32, Vec<&'static str>, Vec<i32>) {
+    fn get_max_happiness_seating(
+        graph: &HashMap<&'static str, HashMap<&'static str, i32>>,
+    ) -> (i32, Vec<&'static str>, Vec<i32>) {
         let mut result = Vec::new();
-        for mut permutation in self.graph.keys().permutations(self.graph.len()) {
+        for mut permutation in graph.keys().permutations(graph.len()) {
             permutation.push(permutation[0]);
             let mut sum_happiness = 0;
             let mut names = Vec::new();
             let mut happiness_values = Vec::new();
             for (&&name_from, &&name_to) in permutation.iter().tuple_windows() {
-                let happiness_factor_from =
-                    self.graph.get(name_from).unwrap().get(name_to).unwrap();
-                let happiness_factor_to = self.graph.get(name_to).unwrap().get(name_from).unwrap();
+                let happiness_factor_from = graph.get(name_from).unwrap().get(name_to).unwrap();
+                let happiness_factor_to = graph.get(name_to).unwrap().get(name_from).unwrap();
                 sum_happiness += happiness_factor_from;
                 sum_happiness += happiness_factor_to;
                 names.push(name_from);
@@ -59,13 +60,23 @@ impl Day13Solver {
 
 impl Solver for Day13Solver {
     fn solve_part_one(&self) -> String {
-        let (sum_hapiness, _names, _happiness_values) = self.get_max_happiness_seating();
+        let (sum_hapiness, _names, _happiness_values) =
+            Day13Solver::get_max_happiness_seating(&self.graph);
         //println!("optimal seating: {sum_hapiness}, {names:?}, {happiness_values:?}");
         sum_hapiness.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let me = "me";
+        let mut graph = self.graph.clone();
+        for &name in self.graph.keys() {
+            graph.entry(name).or_default().insert(me, 0);
+            graph.entry(me).or_default().insert(name, 0);
+        }
+        let (sum_hapiness, _names, _happiness_values) =
+            Day13Solver::get_max_happiness_seating(&graph);
+        //println!("optimal seating: {sum_hapiness}, {names:?}, {happiness_values:?}");
+        sum_hapiness.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -101,14 +112,3 @@ David would gain 41 happiness units by sitting next to Carol.",
         assert_eq!(result, "330");
     }
 }
-
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_1() {
-//         let result = Day13Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
