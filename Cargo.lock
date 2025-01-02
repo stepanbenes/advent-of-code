@@ -23,6 +23,8 @@ version = "0.1.0"
 dependencies = [
  "itertools",
  "md5",
+ "serde",
+ "serde_json",
  "solver",
 ]
 
@@ -135,6 +137,12 @@ name = "itoa"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
+
+[[package]]
+name = "itoa"
+version = "1.0.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d75a2a4b1b190afb6f5425f10f6a8f959d2ea0b9c2b1d79553551850539e4674"
 
 [[package]]
 name = "leb128"
@@ -351,6 +359,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ryu"
+version = "1.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f3cb5ba0dc43242ce17de99c180e96db90b235b8a9fdc9543c96d2209116bd9f"
+
+[[package]]
 name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -374,6 +388,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.93",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.134"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d00f4175c42ee48b15416f6193a959ba3a0d67fc699a0db9ad12df9f83991c7d"
+dependencies = [
+ "itoa 1.0.14",
+ "memchr",
+ "ryu",
+ "serde",
 ]
 
 [[package]]
@@ -489,7 +515,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebe609851d1e9196674ac295f656bd8601200a1077343d22b345013497807caf"
 dependencies = [
  "anyhow",
- "itoa",
+ "itoa 0.4.8",
  "leb128",
  "log",
  "ordered-float",
@@ -529,7 +555,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d1dee4e21be1f04c0a939f7ae710cced47233a578de08a1b3c7d50848402636"
 dependencies = [
  "anyhow",
- "itoa",
+ "itoa 0.4.8",
  "thiserror",
  "varisat-formula",
 ]
