@@ -6,6 +6,12 @@ struct Reindeer {
     rest_time: u32, // s
 }
 
+#[derive(Debug, Clone)]
+enum ReindeerState {
+    Flying(u32),
+    Resting(u32),
+}
+
 pub struct Day14Solver {
     reindeers: Vec<Reindeer>,
     time: u32,
@@ -51,6 +57,43 @@ impl Day14Solver {
         }
         distance
     }
+
+    fn simulate_flying_with_bonus_points(&self) -> u32 {
+        let mut reindeer_states: Vec<ReindeerState> =
+            vec![ReindeerState::Flying(0); self.reindeers.len()];
+        let mut reindeer_distances: Vec<u32> = vec![0; self.reindeers.len()];
+        let mut bonus_points: Vec<u32> = vec![0; self.reindeers.len()];
+        for _ in 0..self.time {
+            for (i, reindeer) in self.reindeers.iter().enumerate() {
+                match reindeer_states[i] {
+                    ReindeerState::Flying(time) => {
+                        if time == reindeer.fly_time {
+                            reindeer_states[i] = ReindeerState::Resting(1);
+                        } else {
+                            reindeer_states[i] = ReindeerState::Flying(time + 1);
+                            reindeer_distances[i] += reindeer.speed;
+                        }
+                    }
+                    ReindeerState::Resting(time) => {
+                        if time == reindeer.rest_time {
+                            reindeer_states[i] = ReindeerState::Flying(1);
+                            reindeer_distances[i] += reindeer.speed;
+                        } else {
+                            reindeer_states[i] = ReindeerState::Resting(time + 1);
+                        }
+                    }
+                }
+            }
+
+            let max_distance = reindeer_distances.iter().max().unwrap();
+            for (i, reindeer_distance) in reindeer_distances.iter().enumerate() {
+                if reindeer_distance == max_distance {
+                    bonus_points[i] += 1;
+                }
+            }
+        }
+        *bonus_points.iter().max().unwrap()
+    }
 }
 
 impl Solver for Day14Solver {
@@ -65,7 +108,8 @@ impl Solver for Day14Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let points = self.simulate_flying_with_bonus_points();
+        points.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -93,13 +137,18 @@ Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Day14Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Day14Solver::new(
+            "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
+Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
+            1000,
+        )
+        .solve_part_two();
+        assert_eq!(result, "689");
+    }
+}
