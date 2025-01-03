@@ -1,8 +1,8 @@
 use std::{cell::RefCell, collections::HashMap};
 
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day07Solver {
+pub struct Solver {
     instructions: HashMap<&'static str, Instruction>,
     memo: RefCell<HashMap<&'static str, u16>>,
 }
@@ -23,7 +23,7 @@ enum Instruction {
     Rshift(WireOrValue, u16),
 }
 
-impl Day07Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         fn parse_wire_or_value(op: &'static str) -> WireOrValue {
             op.parse().map_or(WireOrValue::Wire(op), WireOrValue::Value)
@@ -58,7 +58,7 @@ impl Day07Solver {
             let (wire, instruction) = parse_line(line);
             instructions.insert(wire, instruction);
         }
-        Day07Solver {
+        Solver {
             instructions,
             memo: RefCell::new(HashMap::new()),
         }
@@ -104,7 +104,7 @@ impl Day07Solver {
     }
 }
 
-impl Solver for Day07Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let a_signal = self.evaluate(self.instructions.get("a").unwrap(), "a");
         a_signal.to_string()
@@ -137,7 +137,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day07Solver::new(
+        let result = Solver::new(
             r"123 -> x
 456 -> y
 x AND y -> d
@@ -168,7 +168,7 @@ y: 456"
 
 //     #[test]
 //     fn test_1() {
-//         let result = Day07Solver::new("abc").solve_part_two();
+//         let result = Solver::new("abc").solve_part_two();
 //         assert_eq!(result, "0");
 //     }
 // }

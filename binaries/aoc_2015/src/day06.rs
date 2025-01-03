@@ -1,5 +1,5 @@
 #![allow(clippy::needless_range_loop)]
-use solver::Solver;
+use solver::SolverBase;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 enum Action {
@@ -24,11 +24,11 @@ struct Position {
 const GRID_WIDTH: usize = 1000;
 const GRID_HEIGHT: usize = 1000;
 
-pub struct Day06Solver {
+pub struct Solver {
     commands: Vec<Command>,
 }
 
-impl Day06Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         fn parse_command(text: &str) -> Command {
             let tokens: Vec<_> = text.split([' ', ',']).collect();
@@ -71,11 +71,11 @@ impl Day06Solver {
         }
 
         let commands = input.lines().map(parse_command).collect();
-        Day06Solver { commands }
+        Solver { commands }
     }
 }
 
-impl Solver for Day06Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let mut grid = vec![vec![false; GRID_WIDTH]; GRID_HEIGHT];
 
@@ -175,25 +175,25 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day06Solver::new("turn on 0,0 through 999,999").solve_part_one();
+        let result = Solver::new("turn on 0,0 through 999,999").solve_part_one();
         assert_eq!(result, "1000000");
     }
 
     #[test]
     fn test_2() {
-        let result = Day06Solver::new("toggle 0,0 through 999,0").solve_part_one();
+        let result = Solver::new("toggle 0,0 through 999,0").solve_part_one();
         assert_eq!(result, "1000");
     }
 
     #[test]
     fn test_3() {
-        let result = Day06Solver::new("turn off 499,499 through 500,500").solve_part_one();
+        let result = Solver::new("turn off 499,499 through 500,500").solve_part_one();
         assert_eq!(result, "0");
     }
 
     #[test]
     fn test_4() {
-        let result = Day06Solver::new(
+        let result = Solver::new(
             r"turn on 0,0 through 999,999
 toggle 0,0 through 999,0
 turn off 499,499 through 500,500",
@@ -209,13 +209,13 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day06Solver::new("toggle 0,0 through 999,999").solve_part_two();
+        let result = Solver::new("toggle 0,0 through 999,999").solve_part_two();
         assert_eq!(result, "2000000");
     }
 
     #[test]
     fn test_2() {
-        let result = Day06Solver::new(
+        let result = Solver::new(
             r"turn on 0,0 through 0,0
 turn on 0,0 through 0,0
 turn on 0,0 through 0,0
@@ -228,7 +228,7 @@ turn on 0,0 through 0,0",
 
     #[test]
     fn test_3() {
-        let result = Day06Solver::new(
+        let result = Solver::new(
             r"turn on 0,0 through 0,0
 turn off 0,0 through 0,0
 turn on 0,0 through 0,0

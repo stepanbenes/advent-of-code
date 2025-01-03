@@ -1,16 +1,16 @@
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day04Solver {
+pub struct Solver {
     input: &'static str,
 }
 
-impl Day04Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
-        Day04Solver { input }
+        Solver { input }
     }
 }
 
-impl Solver for Day04Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         for n in 0..u32::MAX {
             let test = format!("{}{}", self.input, n);
@@ -54,13 +54,13 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day04Solver::new("abcdef").solve_part_one();
+        let result = Solver::new("abcdef").solve_part_one();
         assert_eq!(result, "609043");
     }
 
     #[test]
     fn test_2() {
-        let result = Day04Solver::new("pqrstuv").solve_part_one();
+        let result = Solver::new("pqrstuv").solve_part_one();
         assert_eq!(result, "1048970");
     }
 }

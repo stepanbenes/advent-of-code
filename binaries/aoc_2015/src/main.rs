@@ -1,4 +1,4 @@
-use solver::Solver;
+use solver::SolverBase;
 
 mod day01;
 mod day02;
@@ -16,24 +16,21 @@ mod day13;
 mod day14;
 
 fn main() {
-    let solvers: Vec<Box<dyn Solver>> = vec![
-        Box::new(day01::Day01Solver::new(include_str!("../input/day01.txt"))),
-        Box::new(day02::Day02Solver::new(include_str!("../input/day02.txt"))),
-        Box::new(day03::Day03Solver::new(include_str!("../input/day03.txt"))),
-        Box::new(day04::Day04Solver::new("yzbqklnj")),
-        Box::new(day05::Day05Solver::new(include_str!("../input/day05.txt"))),
-        Box::new(day06::Day06Solver::new(include_str!("../input/day06.txt"))),
-        Box::new(day07::Day07Solver::new(include_str!("../input/day07.txt"))),
-        Box::new(day08::Day08Solver::new(include_str!("../input/day08.txt"))),
-        Box::new(day09::Day09Solver::new(include_str!("../input/day09.txt"))),
-        Box::new(day10::Day10Solver::new("1113122113", 40, 50)),
-        Box::new(day11::Day11Solver::new("cqjxjnds")),
-        Box::new(day12::Day12Solver::new(include_str!("../input/day12.json"))),
-        Box::new(day13::Day13Solver::new(include_str!("../input/day13.txt"))),
-        Box::new(day14::Day14Solver::new(
-            include_str!("../input/day14.txt"),
-            2503,
-        )),
+    let solvers: Vec<Box<dyn SolverBase>> = vec![
+        Box::new(day01::Solver::new(include_str!("../input/day01.txt"))),
+        Box::new(day02::Solver::new(include_str!("../input/day02.txt"))),
+        Box::new(day03::Solver::new(include_str!("../input/day03.txt"))),
+        Box::new(day04::Solver::new("yzbqklnj")),
+        Box::new(day05::Solver::new(include_str!("../input/day05.txt"))),
+        Box::new(day06::Solver::new(include_str!("../input/day06.txt"))),
+        Box::new(day07::Solver::new(include_str!("../input/day07.txt"))),
+        Box::new(day08::Solver::new(include_str!("../input/day08.txt"))),
+        Box::new(day09::Solver::new(include_str!("../input/day09.txt"))),
+        Box::new(day10::Solver::new("1113122113", 40, 50)),
+        Box::new(day11::Solver::new("cqjxjnds")),
+        Box::new(day12::Solver::new(include_str!("../input/day12.json"))),
+        Box::new(day13::Solver::new(include_str!("../input/day13.txt"))),
+        Box::new(day14::Solver::new(include_str!("../input/day14.txt"), 2503)),
     ];
 
     for solver in solvers {

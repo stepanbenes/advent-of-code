@@ -1,4 +1,4 @@
-pub trait Solver {
+pub trait SolverBase {
     fn solve_part_one(&self) -> String {
         "".to_owned()
     }

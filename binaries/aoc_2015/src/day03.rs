@@ -1,4 +1,4 @@
-use solver::Solver;
+use solver::SolverBase;
 use std::collections::HashSet;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -23,11 +23,11 @@ impl Position {
     }
 }
 
-pub struct Day03Solver {
+pub struct Solver {
     directions: Vec<Direction>,
 }
 
-impl Day03Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         let directions = input
             .chars()
@@ -39,11 +39,11 @@ impl Day03Solver {
                 _ => panic!("unrecognized symbol"),
             })
             .collect();
-        Day03Solver { directions }
+        Solver { directions }
     }
 }
 
-impl Solver for Day03Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let mut position = Position(0, 0);
         let mut visited_positions = HashSet::new();
@@ -86,19 +86,19 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day03Solver::new(">").solve_part_one();
+        let result = Solver::new(">").solve_part_one();
         assert_eq!(result, "2");
     }
 
     #[test]
     fn test_2() {
-        let result = Day03Solver::new("^>v<").solve_part_one();
+        let result = Solver::new("^>v<").solve_part_one();
         assert_eq!(result, "4");
     }
 
     #[test]
     fn test_3() {
-        let result = Day03Solver::new("^v^v^v^v^v").solve_part_one();
+        let result = Solver::new("^v^v^v^v^v").solve_part_one();
         assert_eq!(result, "2");
     }
 }
@@ -109,19 +109,19 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day03Solver::new("^v").solve_part_two();
+        let result = Solver::new("^v").solve_part_two();
         assert_eq!(result, "3");
     }
 
     #[test]
     fn test_2() {
-        let result = Day03Solver::new("^>v<").solve_part_two();
+        let result = Solver::new("^>v<").solve_part_two();
         assert_eq!(result, "3");
     }
 
     #[test]
     fn test_3() {
-        let result = Day03Solver::new("^v^v^v^v^v").solve_part_two();
+        let result = Solver::new("^v^v^v^v^v").solve_part_two();
         assert_eq!(result, "11");
     }
 }

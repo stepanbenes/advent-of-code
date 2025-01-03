@@ -1,14 +1,14 @@
 use solver::Solver;
 
-pub struct DayXXSolver {}
+pub struct Solver {}
 
-impl DayXXSolver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
-        DayXXSolver {}
+        Solver {}
     }
 }
 
-impl Solver for DayXXSolver {
+impl Solver for Solver {
     fn solve_part_one(&self) -> String {
         "".to_string()
     }
@@ -32,7 +32,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = DayXXSolver::new("abc").solve_part_one();
+        let result = Solver::new("abc").solve_part_one();
         assert_eq!(result, "0");
     }
 }
@@ -43,7 +43,7 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = DayXXSolver::new("abc").solve_part_two();
+        let result = Solver::new("abc").solve_part_two();
         assert_eq!(result, "0");
     }
 }

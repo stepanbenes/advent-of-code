@@ -1,14 +1,14 @@
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day10Solver {
+pub struct Solver {
     input: &'static str,
     repeat_count_part1: usize,
     repeat_count_part2: usize,
 }
 
-impl Day10Solver {
+impl Solver {
     pub fn new(input: &'static str, repeat_count_part1: usize, repeat_count_part2: usize) -> Self {
-        Day10Solver {
+        Solver {
             input,
             repeat_count_part1,
             repeat_count_part2,
@@ -32,20 +32,20 @@ impl Day10Solver {
     fn look_and_say_repeat(text: &str, repeat_count: usize) -> String {
         let mut text = text.to_owned();
         for _ in 0..repeat_count {
-            text = Day10Solver::look_and_say(&text);
+            text = Solver::look_and_say(&text);
         }
         text
     }
 }
 
-impl Solver for Day10Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        let result = Day10Solver::look_and_say_repeat(self.input, self.repeat_count_part1);
+        let result = Solver::look_and_say_repeat(self.input, self.repeat_count_part1);
         result.len().to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        let result = Day10Solver::look_and_say_repeat(self.input, self.repeat_count_part2);
+        let result = Solver::look_and_say_repeat(self.input, self.repeat_count_part2);
         result.len().to_string()
     }
 
@@ -64,43 +64,43 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day10Solver::look_and_say_repeat("1", 1);
+        let result = Solver::look_and_say_repeat("1", 1);
         assert_eq!(result, "11");
     }
 
     #[test]
     fn test_2() {
-        let result = Day10Solver::look_and_say_repeat("11", 1);
+        let result = Solver::look_and_say_repeat("11", 1);
         assert_eq!(result, "21");
     }
 
     #[test]
     fn test_3() {
-        let result = Day10Solver::look_and_say_repeat("21", 1);
+        let result = Solver::look_and_say_repeat("21", 1);
         assert_eq!(result, "1211");
     }
 
     #[test]
     fn test_4() {
-        let result = Day10Solver::look_and_say_repeat("1211", 1);
+        let result = Solver::look_and_say_repeat("1211", 1);
         assert_eq!(result, "111221");
     }
 
     #[test]
     fn test_5() {
-        let result = Day10Solver::look_and_say_repeat("111221", 1);
+        let result = Solver::look_and_say_repeat("111221", 1);
         assert_eq!(result, "312211");
     }
 
     #[test]
     fn test_6() {
-        let result = Day10Solver::look_and_say_repeat("1", 5);
+        let result = Solver::look_and_say_repeat("1", 5);
         assert_eq!(result, "312211");
     }
 
     #[test]
     fn test_7() {
-        let result = Day10Solver::new("1", 5, 0).solve_part_one();
+        let result = Solver::new("1", 5, 0).solve_part_one();
         assert_eq!(result, "6");
     }
 }
@@ -111,7 +111,7 @@ mod part1_tests {
 
 //     #[test]
 //     fn test_1() {
-//         let result = Day10Solver::new("abc").solve_part_two();
+//         let result = Solver::new("abc").solve_part_two();
 //         assert_eq!(result, "0");
 //     }
 // }

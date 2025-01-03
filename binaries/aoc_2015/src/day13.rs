@@ -1,12 +1,12 @@
 use itertools::Itertools;
-use solver::Solver;
+use solver::SolverBase;
 use std::collections::HashMap;
 
-pub struct Day13Solver {
+pub struct Solver {
     graph: HashMap<&'static str, HashMap<&'static str, i32>>,
 }
 
-impl Day13Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         let mut graph = HashMap::new();
         for line in input.lines() {
@@ -27,7 +27,7 @@ impl Day13Solver {
                     .insert(*neighbor_name, hapiness_units);
             }
         }
-        Day13Solver { graph }
+        Solver { graph }
     }
 
     fn get_max_happiness_seating(
@@ -58,10 +58,10 @@ impl Day13Solver {
     }
 }
 
-impl Solver for Day13Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let (sum_hapiness, _names, _happiness_values) =
-            Day13Solver::get_max_happiness_seating(&self.graph);
+            Solver::get_max_happiness_seating(&self.graph);
         //println!("optimal seating: {sum_hapiness}, {names:?}, {happiness_values:?}");
         sum_hapiness.to_string()
     }
@@ -73,8 +73,7 @@ impl Solver for Day13Solver {
             graph.entry(name).or_default().insert(me, 0);
             graph.entry(me).or_default().insert(name, 0);
         }
-        let (sum_hapiness, _names, _happiness_values) =
-            Day13Solver::get_max_happiness_seating(&graph);
+        let (sum_hapiness, _names, _happiness_values) = Solver::get_max_happiness_seating(&graph);
         //println!("optimal seating: {sum_hapiness}, {names:?}, {happiness_values:?}");
         sum_hapiness.to_string()
     }
@@ -94,7 +93,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day13Solver::new(
+        let result = Solver::new(
             r"Alice would gain 54 happiness units by sitting next to Bob.
 Alice would lose 79 happiness units by sitting next to Carol.
 Alice would lose 2 happiness units by sitting next to David.

@@ -1,4 +1,4 @@
-use solver::Solver;
+use solver::SolverBase;
 
 struct Reindeer {
     speed: u32,     // km/s
@@ -12,12 +12,12 @@ enum ReindeerState {
     Resting(u32),
 }
 
-pub struct Day14Solver {
+pub struct Solver {
     reindeers: Vec<Reindeer>,
     time: u32,
 }
 
-impl Day14Solver {
+impl Solver {
     pub fn new(input: &'static str, time: u32) -> Self {
         let mut reindeers = Vec::new();
         for line in input.lines() {
@@ -32,7 +32,7 @@ impl Day14Solver {
                 });
             }
         }
-        Day14Solver { reindeers, time }
+        Solver { reindeers, time }
     }
 
     fn simulate_flying(&self, reindeer: &Reindeer) -> u32 {
@@ -96,7 +96,7 @@ impl Day14Solver {
     }
 }
 
-impl Solver for Day14Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let distances: Vec<u32> = self
             .reindeers
@@ -127,7 +127,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day14Solver::new(
+        let result = Solver::new(
             r"Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
 Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
             1000,
@@ -143,7 +143,7 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day14Solver::new(
+        let result = Solver::new(
             "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
 Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
             1000,

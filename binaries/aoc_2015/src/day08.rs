@@ -1,12 +1,12 @@
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day08Solver {
+pub struct Solver {
     input: &'static str,
 }
 
-impl Day08Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
-        Day08Solver { input }
+        Solver { input }
     }
 
     pub fn encode(text: &'static str) -> String {
@@ -24,7 +24,7 @@ impl Day08Solver {
     }
 }
 
-impl Solver for Day08Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let mut code_char_count = 0;
         let mut memory_char_count = 0;
@@ -67,7 +67,7 @@ impl Solver for Day08Solver {
             let length = bytes.len();
             old_char_count += length;
 
-            let encoded_line = Day08Solver::encode(line);
+            let encoded_line = Solver::encode(line);
             let bytes = encoded_line.as_bytes();
             let length = bytes.len();
             new_char_count += length;
@@ -90,7 +90,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day08Solver::new(
+        let result = Solver::new(
             r#"""
 "#,
         )
@@ -100,7 +100,7 @@ mod part1_tests {
 
     #[test]
     fn test_2() {
-        let result = Day08Solver::new(
+        let result = Solver::new(
             r#""abc"
 "#,
         )
@@ -110,7 +110,7 @@ mod part1_tests {
 
     #[test]
     fn test_3() {
-        let result = Day08Solver::new(
+        let result = Solver::new(
             r#""aaa\"aaa"
 "#,
         )
@@ -120,7 +120,7 @@ mod part1_tests {
 
     #[test]
     fn test_4() {
-        let result = Day08Solver::new(
+        let result = Solver::new(
             r#""\x27"
 "#,
         )
@@ -130,7 +130,7 @@ mod part1_tests {
 
     #[test]
     fn test_5() {
-        let result = Day08Solver::new(
+        let result = Solver::new(
             r#"""
 "abc"
 "aaa\"aaa"
@@ -148,25 +148,25 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day08Solver::encode(r#""""#);
+        let result = Solver::encode(r#""""#);
         assert_eq!(result, r#""\"\"""#);
     }
 
     #[test]
     fn test_2() {
-        let result = Day08Solver::encode(r#""abc""#);
+        let result = Solver::encode(r#""abc""#);
         assert_eq!(result, r#""\"abc\"""#);
     }
 
     #[test]
     fn test_3() {
-        let result = Day08Solver::encode(r#""aaa\"aaa""#);
+        let result = Solver::encode(r#""aaa\"aaa""#);
         assert_eq!(result, r#""\"aaa\\\"aaa\"""#);
     }
 
     #[test]
     fn test_4() {
-        let result = Day08Solver::encode(r#""\x27""#);
+        let result = Solver::encode(r#""\x27""#);
         assert_eq!(result, r#""\"\\x27\"""#);
     }
 }

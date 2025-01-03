@@ -1,13 +1,13 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day09Solver {
+pub struct Solver {
     pub graph: HashMap<&'static str, HashMap<&'static str, i32>>,
 }
 
-impl Day09Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         let mut graph = HashMap::new();
         for line in input.lines() {
@@ -24,7 +24,7 @@ impl Day09Solver {
                     .insert(*city_from, distance);
             }
         }
-        Day09Solver { graph }
+        Solver { graph }
     }
 
     pub fn get_all_distances(&self, return_to_start: bool) -> Vec<i32> {
@@ -44,7 +44,7 @@ impl Day09Solver {
     }
 }
 
-impl Solver for Day09Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let distances = self.get_all_distances(false);
         let shortest_distance = *distances.iter().min().unwrap();
@@ -72,7 +72,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day09Solver::new(
+        let result = Solver::new(
             r"London to Dublin = 464
 London to Belfast = 518
 Dublin to Belfast = 141",
@@ -88,7 +88,7 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day09Solver::new(
+        let result = Solver::new(
             r"London to Dublin = 464
 London to Belfast = 518
 Dublin to Belfast = 141",

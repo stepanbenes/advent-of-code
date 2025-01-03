@@ -1,15 +1,15 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day11Solver {
+pub struct Solver {
     current_password: &'static str,
 }
 
-impl Day11Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
-        Day11Solver {
+        Solver {
             current_password: input,
         }
     }
@@ -60,8 +60,8 @@ impl Day11Solver {
     fn generate_next_password(password: &str) -> String {
         let mut password = password.to_owned();
         loop {
-            password = Day11Solver::increment_password(&password);
-            if Day11Solver::is_valid_password(&password) {
+            password = Solver::increment_password(&password);
+            if Solver::is_valid_password(&password) {
                 break;
             }
         }
@@ -69,15 +69,13 @@ impl Day11Solver {
     }
 }
 
-impl Solver for Day11Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        Day11Solver::generate_next_password(self.current_password)
+        Solver::generate_next_password(self.current_password)
     }
 
     fn solve_part_two(&self) -> String {
-        Day11Solver::generate_next_password(&Day11Solver::generate_next_password(
-            self.current_password,
-        ))
+        Solver::generate_next_password(&Solver::generate_next_password(self.current_password))
     }
 
     fn day_number(&self) -> usize {
@@ -95,72 +93,72 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day11Solver::new("abcdefgh").solve_part_one();
+        let result = Solver::new("abcdefgh").solve_part_one();
         assert_eq!(result, "abcdffaa");
     }
 
     #[test]
     fn test_2() {
-        let result = Day11Solver::new("ghijklmn").solve_part_one();
+        let result = Solver::new("ghijklmn").solve_part_one();
         assert_eq!(result, "ghjaabcc");
     }
 
     #[test]
     fn test_3() {
-        let result = Day11Solver::is_valid_password("hijklmmn");
+        let result = Solver::is_valid_password("hijklmmn");
         assert_eq!(result, false);
     }
 
     #[test]
     fn test_4() {
-        let result = Day11Solver::is_valid_password("abbceffg");
+        let result = Solver::is_valid_password("abbceffg");
         assert_eq!(result, false);
     }
 
     #[test]
     fn test_5() {
-        let result = Day11Solver::is_valid_password("abbcegjk");
+        let result = Solver::is_valid_password("abbcegjk");
         assert_eq!(result, false);
     }
 
     #[test]
     fn test_6() {
-        let result = Day11Solver::is_valid_password("abcdefgh");
+        let result = Solver::is_valid_password("abcdefgh");
         assert_eq!(result, false);
     }
 
     #[test]
     fn test_7() {
-        let result = Day11Solver::is_valid_password("abcdffaa");
+        let result = Solver::is_valid_password("abcdffaa");
         assert_eq!(result, true);
     }
 
     #[test]
     fn test_8() {
-        let result = Day11Solver::is_valid_password("ghijklmn");
+        let result = Solver::is_valid_password("ghijklmn");
         assert_eq!(result, false);
     }
 
     #[test]
     fn test_9() {
-        let result = Day11Solver::is_valid_password("ghjaabcc");
+        let result = Solver::is_valid_password("ghjaabcc");
         assert_eq!(result, true);
     }
 
     #[test]
     fn test_10() {
-        let result = Day11Solver::increment_password("ghjaabcc");
+        let result = Solver::increment_password("ghjaabcc");
         assert_eq!(result, "ghjaabcd");
     }
     #[test]
     fn test_11() {
-        let result = Day11Solver::increment_password("ghjaazzz");
+        let result = Solver::increment_password("ghjaazzz");
         assert_eq!(result, "ghjabaaa");
     }
 
     #[test]
     fn test_12() {
-        let result = Day11Solver::increment_password("zzz");
+        let result = Solver::increment_password("zzz");
         assert_eq!(result, "aaaa");
     }
 }
@@ -171,7 +169,7 @@ mod part1_tests {
 
 //     #[test]
 //     fn test_1() {
-//         let result = Day11Solver::new("abc").solve_part_two();
+//         let result = Solver::new("abc").solve_part_two();
 //         assert_eq!(result, "0");
 //     }
 // }

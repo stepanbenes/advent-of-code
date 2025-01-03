@@ -1,4 +1,4 @@
-use solver::Solver;
+use solver::SolverBase;
 
 struct Box {
     length: u32,
@@ -32,11 +32,11 @@ impl Box {
     }
 }
 
-pub struct Day02Solver {
+pub struct Solver {
     boxes: Vec<Box>,
 }
 
-impl Day02Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
         let boxes = input
             .lines()
@@ -49,11 +49,11 @@ impl Day02Solver {
                 }
             })
             .collect();
-        Day02Solver { boxes }
+        Solver { boxes }
     }
 }
 
-impl Solver for Day02Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let mut total_area = 0;
         for b in self.boxes.iter() {
@@ -86,13 +86,13 @@ mod part1_tests {
 
     #[test]
     fn wrapping_paper_area_1() {
-        let result = Day02Solver::new("2x3x4").solve_part_one();
+        let result = Solver::new("2x3x4").solve_part_one();
         assert_eq!(result, "58");
     }
 
     #[test]
     fn wrapping_paper_area_2() {
-        let result = Day02Solver::new("1x1x10").solve_part_one();
+        let result = Solver::new("1x1x10").solve_part_one();
         assert_eq!(result, "43");
     }
 }
@@ -103,13 +103,13 @@ mod part2_tests {
 
     #[test]
     fn ribbon_1() {
-        let result = Day02Solver::new("2x3x4").solve_part_two();
+        let result = Solver::new("2x3x4").solve_part_two();
         assert_eq!(result, "34");
     }
 
     #[test]
     fn ribbon_2() {
-        let result = Day02Solver::new("1x1x10").solve_part_two();
+        let result = Solver::new("1x1x10").solve_part_two();
         assert_eq!(result, "14");
     }
 }

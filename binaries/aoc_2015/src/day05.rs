@@ -1,18 +1,18 @@
 use std::collections::HashMap;
 
-use solver::Solver;
+use solver::SolverBase;
 
-pub struct Day05Solver {
+pub struct Solver {
     input: &'static str,
 }
 
-impl Day05Solver {
+impl Solver {
     pub fn new(input: &'static str) -> Self {
-        Day05Solver { input }
+        Solver { input }
     }
 }
 
-impl Solver for Day05Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         let mut nice_string_counter = 0;
         for s in self.input.lines() {
@@ -86,31 +86,31 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Day05Solver::new("ugknbfddgicrmopn").solve_part_one();
+        let result = Solver::new("ugknbfddgicrmopn").solve_part_one();
         assert_eq!(result, "1");
     }
 
     #[test]
     fn test_2() {
-        let result = Day05Solver::new("aaa").solve_part_one();
+        let result = Solver::new("aaa").solve_part_one();
         assert_eq!(result, "1");
     }
 
     #[test]
     fn test_3() {
-        let result = Day05Solver::new("jchzalrnumimnmhp").solve_part_one();
+        let result = Solver::new("jchzalrnumimnmhp").solve_part_one();
         assert_eq!(result, "0");
     }
 
     #[test]
     fn test_4() {
-        let result = Day05Solver::new("haegwjzuvuyypxyu").solve_part_one();
+        let result = Solver::new("haegwjzuvuyypxyu").solve_part_one();
         assert_eq!(result, "0");
     }
 
     #[test]
     fn test_5() {
-        let result = Day05Solver::new("dvszwmarrgswjxmb").solve_part_one();
+        let result = Solver::new("dvszwmarrgswjxmb").solve_part_one();
         assert_eq!(result, "0");
     }
 }
@@ -121,31 +121,31 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Day05Solver::new("qjhvhtzxzqqjkmpb").solve_part_two();
+        let result = Solver::new("qjhvhtzxzqqjkmpb").solve_part_two();
         assert_eq!(result, "1");
     }
 
     #[test]
     fn test_2() {
-        let result = Day05Solver::new("xxyxx").solve_part_two();
+        let result = Solver::new("xxyxx").solve_part_two();
         assert_eq!(result, "1");
     }
 
     #[test]
     fn test_3() {
-        let result = Day05Solver::new("uurcxstgmygtbstg").solve_part_two();
+        let result = Solver::new("uurcxstgmygtbstg").solve_part_two();
         assert_eq!(result, "0");
     }
 
     #[test]
     fn test_4() {
-        let result = Day05Solver::new("ieodomkazucvgmuy").solve_part_two();
+        let result = Solver::new("ieodomkazucvgmuy").solve_part_two();
         assert_eq!(result, "0");
     }
 
     #[test]
     fn test_5() {
-        let result = Day05Solver::new("aa").solve_part_two();
+        let result = Solver::new("aa").solve_part_two();
         assert_eq!(result, "0");
     }
 }
