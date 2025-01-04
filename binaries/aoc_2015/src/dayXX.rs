@@ -1,4 +1,4 @@
-use solver::Solver;
+use solver::SolverBase;
 
 pub struct Solver {}
 
@@ -8,7 +8,7 @@ impl Solver {
     }
 }
 
-impl Solver for Solver {
+impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
         "".to_string()
     }
