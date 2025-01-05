@@ -34,38 +34,67 @@ impl Solver {
         Solver { sues }
     }
 
-    fn find_best_fit(&self, detector_result: &HashMap<&'static str, u8>) -> Vec<&Sue> {
+    fn find_best_fit(
+        &self,
+        detector_result: &HashMap<&'static str, u8>,
+        compensate_for_outdated_retroencabulator: bool,
+    ) -> Vec<&Sue> {
         fn get_similarity_index(
             a: &HashMap<&'static str, u8>,
             b: &HashMap<&'static str, u8>,
+            compensate_for_outdated_retroencabulator: bool,
         ) -> i32 {
             let mut total_diff = 0;
             for (name, value) in a {
                 let test_value = b.get(name).unwrap();
-                let diff = value.abs_diff(*test_value);
+                let mut diff = value.abs_diff(*test_value);
+                if compensate_for_outdated_retroencabulator {
+                    if *name == "cats" || *name == "trees" {
+                        if value > test_value {
+                            diff = 0;
+                        } else {
+                            diff = u8::MAX;
+                        }
+                    }
+                    if *name == "pomeranians" || *name == "goldfish" {
+                        if value < test_value {
+                            diff = 0;
+                        } else {
+                            diff = u8::MAX;
+                        }
+                    }
+                }
                 total_diff += diff as i32;
             }
             total_diff
         }
         let mut best_sues: Vec<&Sue> = vec![&self.sues[0]];
-        let mut best_similarity_index: i32 =
-            get_similarity_index(&self.sues[0].things, detector_result);
+        let mut best_similarity_index: i32 = get_similarity_index(
+            &self.sues[0].things,
+            detector_result,
+            compensate_for_outdated_retroencabulator,
+        );
         for sue in self.sues.iter() {
-            let similarity_index = get_similarity_index(&sue.things, detector_result);
-            if similarity_index < best_similarity_index {
-                best_sues = vec![sue];
-                best_similarity_index = similarity_index;
-            }
-            else if similarity_index == best_similarity_index {
-                best_sues.push(sue);
+            let similarity_index = get_similarity_index(
+                &sue.things,
+                detector_result,
+                compensate_for_outdated_retroencabulator,
+            );
+            match similarity_index.cmp(&best_similarity_index) {
+                std::cmp::Ordering::Less => {
+                    best_sues = vec![sue];
+                    best_similarity_index = similarity_index;
+                }
+                std::cmp::Ordering::Equal => {
+                    best_sues.push(sue);
+                }
+                std::cmp::Ordering::Greater => {}
             }
         }
         best_sues
     }
-}
 
-impl SolverBase for Solver {
-    fn solve_part_one(&self) -> String {
+    fn get_detector_result() -> HashMap<&'static str, u8> {
         let mut detector_result = HashMap::new();
         detector_result.insert("children", 3);
         detector_result.insert("cats", 7);
@@ -77,13 +106,25 @@ impl SolverBase for Solver {
         detector_result.insert("trees", 3);
         detector_result.insert("cars", 2);
         detector_result.insert("perfumes", 1);
-        let best_fit_sues = self.find_best_fit(&detector_result);
-        println!("{best_fit_sues:?}");
+        detector_result
+    }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        let detector_result = Solver::get_detector_result();
+        let best_fit_sues = self.find_best_fit(&detector_result, false);
+        //println!("{best_fit_sues:?}");
+        assert!(best_fit_sues.len() == 1);
         best_fit_sues[0].number.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let detector_result = Solver::get_detector_result();
+        let best_fit_sues = self.find_best_fit(&detector_result, true);
+        //println!("{best_fit_sues:?}");
+        assert!(best_fit_sues.len() == 1);
+        best_fit_sues[0].number.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -94,25 +135,3 @@ impl SolverBase for Solver {
         "Aunt Sue"
     }
 }
-
-#[cfg(test)]
-mod part1_tests {
-    use super::*;
-
-    #[test]
-    fn test_1() {
-        let result = Solver::new("abc").solve_part_one();
-        assert_eq!(result, "0");
-    }
-}
-
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
