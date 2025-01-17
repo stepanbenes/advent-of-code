@@ -61,6 +61,30 @@ impl Solver {
         //println!("{most_common_chars}");
         most_common_chars == room.checksum
     }
+
+    fn shift(room: &Room) -> String {
+        fn shift_char(c: char, shift: u32) -> char {
+            if c.is_ascii_lowercase() {
+                // Calculate the new character with wrapping
+                let base = b'a';
+                let offset = ((c as u8 - base) as u32 + shift).rem_euclid(26);
+                (base + offset as u8) as char
+            } else {
+                c // Return the character unchanged if not in range
+            }
+        }
+
+        let mut result = Vec::new();
+        for code in room.codes.iter() {
+            let mut shifted_code = String::new();
+            for c in code.chars() {
+                let shifted_c = shift_char(c, room.id);
+                shifted_code.push(shifted_c);
+            }
+            result.push(shifted_code);
+        }
+        result.join(" ")
+    }
 }
 
 impl SolverBase for Solver {
@@ -75,6 +99,13 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
+        for room in self.rooms.iter() {
+            let decoded_room = Solver::shift(room);
+            //println!("{decoded_room}");
+            if decoded_room == "northpole object storage" {
+                return room.id.to_string();
+            }
+        }
         "".to_string()
     }
 
@@ -116,13 +147,13 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::shift(&Solver::new("qzmt-zixmtkozy-ivhz-343[x]").rooms[0]);
+        assert_eq!(result, "very encrypted name");
+    }
+}
