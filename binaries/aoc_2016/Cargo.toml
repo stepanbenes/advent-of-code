@@ -7,3 +7,4 @@ edition = "2021"
 solver = { path = "../../crates/solver" }
 itertools = "0.14.0"
 regex = "1.11.1"
+md5 = "0.7"

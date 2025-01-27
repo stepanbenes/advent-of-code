@@ -33,6 +33,7 @@ name = "aoc_2016"
 version = "0.1.0"
 dependencies = [
  "itertools 0.14.0",
+ "md5",
  "regex",
  "solver",
 ]
