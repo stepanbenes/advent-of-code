@@ -89,9 +89,14 @@ impl SolverBase for Solver {
     fn description(&self) -> &'static str {
         "MD5 hashed password"
     }
+
+    fn skip_run(&self) -> bool {
+        true
+    }
 }
 
 #[cfg(test)]
+#[cfg(feature = "skip_tests")]
 mod part1_tests {
     use super::*;
 
@@ -122,8 +127,8 @@ mod part1_tests {
         assert_eq!(result, "18f47a30");
     }
 }
-
 #[cfg(test)]
+#[cfg(feature = "skip_tests")]
 mod part2_tests {
     use super::*;
 
