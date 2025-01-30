@@ -34,7 +34,7 @@ impl Solver {
         Solver { ips }
     }
 
-    fn is_valid(ip: &Ip) -> bool {
+    fn supports_tls(ip: &Ip) -> bool {
         ip.segments.iter().any(|x| Solver::has_abba(x))
             && ip.hypernet_sequences.iter().all(|x| !Solver::has_abba(x))
     }
@@ -47,16 +47,59 @@ impl Solver {
         }
         false
     }
+
+    fn supports_ssl(ip: &Ip) -> bool {
+        let aba_list: Vec<_> = ip
+            .segments
+            .iter()
+            .flat_map(|x| Solver::get_all_aba(x))
+            .dedup()
+            .collect();
+        match aba_list.len() {
+            0 => false,
+            1.. => aba_list
+                .iter()
+                .any(|aba| Solver::has_corresponding_bab(ip, aba)),
+        }
+    }
+
+    fn get_all_aba(segment: &'static str) -> Vec<(char, char, char)> {
+        let mut aba_list = Vec::new();
+        for tuple @ (a, b, c) in segment.chars().tuple_windows() {
+            if a == c && a != b {
+                aba_list.push(tuple);
+            }
+        }
+        aba_list
+    }
+
+    fn make_bab_from_aba((a, b, _): &(char, char, char)) -> String {
+        format!("{b}{a}{b}")
+    }
+
+    fn has_corresponding_bab(ip: &Ip, aba: &(char, char, char)) -> bool {
+        let bab = Solver::make_bab_from_aba(aba);
+        ip.hypernet_sequences.iter().any(|x| x.contains(&bab))
+    }
 }
 
 impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        let count = self.ips.iter().filter(|ip| Solver::is_valid(ip)).count();
+        let count = self
+            .ips
+            .iter()
+            .filter(|ip| Solver::supports_tls(ip))
+            .count();
         count.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let count = self
+            .ips
+            .iter()
+            .filter(|ip| Solver::supports_ssl(ip))
+            .count();
+        count.to_string()
     }
 
     fn day_number(&self) -> usize {
