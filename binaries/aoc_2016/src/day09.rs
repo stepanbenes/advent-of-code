@@ -35,6 +35,7 @@ impl Solver {
         (length_str.parse().unwrap(), repeat_str.parse().unwrap())
     }
 
+    #[allow(dead_code)]
     fn decompress(iter: &mut impl Iterator<Item = char>) -> String {
         let mut decompressed_text = String::new();
         while let Some(c) = iter.next() {
@@ -57,6 +58,27 @@ impl Solver {
         }
         decompressed_text
     }
+
+    fn decompress_length(iter: &mut impl Iterator<Item = char>) -> usize {
+        let mut decompressed_length = 0;
+        while let Some(c) = iter.next() {
+            match c {
+                '(' => {
+                    let (length, repeat) = Solver::parse_marker(iter);
+                    let mut substring = String::new();
+                    for _ in 0..length {
+                        substring.push(iter.next().unwrap());
+                    }
+                    let sub_decompressed_length = Solver::decompress_length(&mut substring.chars());
+                    decompressed_length += sub_decompressed_length * repeat;
+                }
+                _ => {
+                    decompressed_length += 1;
+                }
+            }
+        }
+        decompressed_length
+    }
 }
 
 impl SolverBase for Solver {
@@ -77,8 +99,7 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        let text = Solver::decompress(&mut self.input.chars());
-        text.len().to_string()
+        Solver::decompress_length(&mut self.input.chars()).to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -87,10 +108,6 @@ impl SolverBase for Solver {
 
     fn description(&self) -> &'static str {
         "String decompression"
-    }
-
-    fn skip_run(&self) -> bool {
-        false
     }
 }
 
@@ -141,19 +158,33 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::decompress(&mut "(3x3)XYZ".chars());
-        assert_eq!(result, "XYZXYZXYZ");
+        let result = Solver::decompress_length(&mut "(3x3)XYZ".chars());
+        assert_eq!(result, "XYZXYZXYZ".len());
     }
 
     #[test]
     fn test_2() {
-        let result = Solver::decompress(&mut "X(8x2)(3x3)ABCY".chars());
-        assert_eq!(result, "XABCABCABCABCABCABCY");
+        let result = Solver::decompress_length(&mut "X(8x2)(3x3)ABCY".chars());
+        assert_eq!(result, "XABCABCABCABCABCABCY".len());
     }
 
     #[test]
     fn test_3() {
-        let result = Solver::decompress(&mut "(6x4)(1x3)A".chars());
-        assert_eq!(result, "AAAAAAAAAAAA");
+        let result = Solver::decompress_length(&mut "(6x4)(1x3)A".chars());
+        assert_eq!(result, "AAAAAAAAAAAA".len());
+    }
+
+    #[test]
+    fn test_4() {
+        let result = Solver::decompress_length(&mut "(27x12)(20x12)(13x14)(7x10)(1x12)A".chars());
+        assert_eq!(result, 241920);
+    }
+
+    #[test]
+    fn test_5() {
+        let result = Solver::decompress_length(
+            &mut "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN".chars(),
+        );
+        assert_eq!(result, 445);
     }
 }
