@@ -25,6 +25,11 @@ pub struct Solver {
     high_value_microchip: u8,
 }
 
+enum RequiredResult {
+    BotValue,
+    ValueFactor,
+}
+
 impl Solver {
     pub fn new(input: &'static str, low_value_microchip: u8, high_value_microchip: u8) -> Self {
         fn parse_target(target_type: &str, target_number: &str) -> Target {
@@ -62,10 +67,8 @@ impl Solver {
             high_value_microchip,
         }
     }
-}
 
-impl SolverBase for Solver {
-    fn solve_part_one(&self) -> String {
+    fn solve(&self, result_type: RequiredResult) -> String {
         let mut bot_values = HashMap::<u8, HashSet<u8>>::new();
         let mut output_values = HashMap::<u8, u8>::new();
 
@@ -83,22 +86,35 @@ impl SolverBase for Solver {
             None
         }
 
-        let result = loop {
-            let result: Vec<_> = bot_values
-                .iter()
-                .filter_map(|(bot_number, values)| {
-                    if values.contains(&self.low_value_microchip)
-                        && values.contains(&self.high_value_microchip)
-                    {
-                        Some(*bot_number)
-                    } else {
-                        None
+        let result: u32 = loop {
+            match result_type {
+                RequiredResult::ValueFactor => {
+                    if let (Some(&v0), Some(&v1), Some(&v2)) = (
+                        output_values.get(&0),
+                        output_values.get(&1),
+                        output_values.get(&2),
+                    ) {
+                        break v0 as u32 * v1 as u32 * v2 as u32;
                     }
-                })
-                .collect();
-            if !result.is_empty() {
-                //println!("Result: {:?}", result);
-                break result[0];
+                }
+                RequiredResult::BotValue => {
+                    let result: Vec<_> = bot_values
+                        .iter()
+                        .filter_map(|(bot_number, values)| {
+                            if values.contains(&self.low_value_microchip)
+                                && values.contains(&self.high_value_microchip)
+                            {
+                                Some(*bot_number)
+                            } else {
+                                None
+                            }
+                        })
+                        .collect();
+                    if !result.is_empty() {
+                        //println!("Result: {:?}", result);
+                        break result[0] as u32;
+                    }
+                }
             }
 
             for action in self.actions.iter() {
@@ -161,19 +177,26 @@ impl SolverBase for Solver {
                 }
             }
         };
+
         // for (bot, values) in bot_values.iter() {
         //     println!("Bot {bot}: {:?}", values);
         // }
 
-        for (output, value) in output_values.iter() {
-            println!("Output {output}: {value}");
-        }
+        // for (output, value) in output_values.iter() {
+        //     println!("Output {output}: {value}");
+        // }
 
         result.to_string()
     }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        self.solve(RequiredResult::BotValue)
+    }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        self.solve(RequiredResult::ValueFactor)
     }
 
     fn day_number(&self) -> usize {
