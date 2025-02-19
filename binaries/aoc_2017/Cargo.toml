@@ -1,0 +1,11 @@
+[package]
+name = "aoc_2017"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+solver = { path = "../../crates/solver" }
+itertools = "0.14.0"
+
+[features]
+skip_tests = []

@@ -3,5 +3,7 @@ resolver = "2"
 members = [
     "crates/solver",
     "binaries/aoc_2015",
-    "binaries/aoc_2024", "binaries/aoc_2016",
+    "binaries/aoc_2024",
+    "binaries/aoc_2016",
+    "binaries/aoc_2017",
 ]
