@@ -29,11 +29,7 @@ pub fn add_results_of_conditional_multiplications() -> u32 {
         .iter()
         .filter_map(|x| {
             if let Instruction::Mul(a, b) = x {
-                if enabled {
-                    Some(a * b)
-                } else {
-                    None
-                }
+                if enabled { Some(a * b) } else { None }
             } else if let Instruction::Do = x {
                 enabled = true;
                 None

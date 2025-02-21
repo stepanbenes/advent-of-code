@@ -21,8 +21,24 @@ impl Solver {
         for line in input.lines() {
             let tokens: Vec<_> = line.split([':', ' ', ',']).collect();
             // Sprinkles: capacity 5, durability -1, flavor 0, texture 0, calories 5
-            if let [_name, "", "capacity", capacity, "", "durability", durability, "", "flavor", flavor, "", "texture", texture, "", "calories", calories] =
-                &tokens[..]
+            if let [
+                _name,
+                "",
+                "capacity",
+                capacity,
+                "",
+                "durability",
+                durability,
+                "",
+                "flavor",
+                flavor,
+                "",
+                "texture",
+                texture,
+                "",
+                "calories",
+                calories,
+            ] = &tokens[..]
             {
                 ingredients.push(Ingredient {
                     _name,

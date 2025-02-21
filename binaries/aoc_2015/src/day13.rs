@@ -12,8 +12,20 @@ impl Solver {
         for line in input.lines() {
             let tokens = line.split([' ', '.']).collect::<Vec<_>>();
             // Alice would lose 57 happiness units by sitting next to Bob.
-            if let [guest_name, "would", gain_or_lose, hapiness_units, "happiness", "units", "by", "sitting", "next", "to", neighbor_name, ""] =
-                &tokens[..]
+            if let [
+                guest_name,
+                "would",
+                gain_or_lose,
+                hapiness_units,
+                "happiness",
+                "units",
+                "by",
+                "sitting",
+                "next",
+                "to",
+                neighbor_name,
+                "",
+            ] = &tokens[..]
             {
                 let hapiness_units: i32 = hapiness_units.parse().unwrap();
                 let hapiness_units = match *gain_or_lose {

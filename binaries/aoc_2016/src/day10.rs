@@ -49,13 +49,24 @@ impl Solver {
                     value: value_number.parse().unwrap(),
                     bot_number: bot_number.parse().unwrap(),
                 },
-                ["bot", bot_number, "gives", "low", "to", low_target_type, low_target_number, "and", "high", "to", high_target_type, high_target_number] => {
-                    Action::BotGives {
-                        bot_number: bot_number.parse().unwrap(),
-                        low_target: parse_target(low_target_type, low_target_number),
-                        high_target: parse_target(high_target_type, high_target_number),
-                    }
-                }
+                [
+                    "bot",
+                    bot_number,
+                    "gives",
+                    "low",
+                    "to",
+                    low_target_type,
+                    low_target_number,
+                    "and",
+                    "high",
+                    "to",
+                    high_target_type,
+                    high_target_number,
+                ] => Action::BotGives {
+                    bot_number: bot_number.parse().unwrap(),
+                    low_target: parse_target(low_target_type, low_target_number),
+                    high_target: parse_target(high_target_type, high_target_number),
+                },
 
                 _ => panic!("unrecognized action"),
             };

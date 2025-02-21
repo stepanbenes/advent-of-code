@@ -22,8 +22,23 @@ impl Solver {
         let mut reindeers = Vec::new();
         for line in input.lines() {
             let tokens: Vec<_> = line.split_whitespace().collect();
-            if let [_name, "can", "fly", speed, "km/s", "for", fly_time, "seconds,", "but", "then", "must", "rest", "for", rest_time, "seconds."] =
-                &tokens[..]
+            if let [
+                _name,
+                "can",
+                "fly",
+                speed,
+                "km/s",
+                "for",
+                fly_time,
+                "seconds,",
+                "but",
+                "then",
+                "must",
+                "rest",
+                "for",
+                rest_time,
+                "seconds.",
+            ] = &tokens[..]
             {
                 reindeers.push(Reindeer {
                     speed: speed.parse().unwrap(),
