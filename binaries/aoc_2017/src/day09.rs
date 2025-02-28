@@ -9,11 +9,12 @@ impl Solver {
         Solver { input }
     }
 
-    fn get_group_score(&self) -> u32 {
+    fn get_group_score(&self) -> (u32, u32) {
         let mut is_escape = false;
         let mut is_garbage = false;
         let mut depth = 0;
         let mut score = 0;
+        let mut garbage_counter = 0;
         for c in self.input.chars() {
             if !is_escape {
                 match c {
@@ -21,11 +22,20 @@ impl Solver {
                         depth += 1;
                         score += depth;
                     }
+                    '{' => {
+                        garbage_counter += 1;
+                    }
                     '}' if !is_garbage => {
                         depth -= 1;
                     }
-                    '<' => {
+                    '}' => {
+                        garbage_counter += 1;
+                    }
+                    '<' if !is_garbage => {
                         is_garbage = true;
+                    }
+                    '<' => {
+                        garbage_counter += 1;
                     }
                     '>' => {
                         is_garbage = false;
@@ -33,23 +43,28 @@ impl Solver {
                     '!' => {
                         is_escape = true;
                     }
-                    _ => {}
+                    _ if !is_garbage => {}
+                    _ => {
+                        garbage_counter += 1;
+                    }
                 }
             } else {
                 is_escape = false;
             }
         }
-        score
+        (score, garbage_counter)
     }
 }
 
 impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        self.get_group_score().to_string()
+        let (score, _) = self.get_group_score();
+        score.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let (_, garbage_counter) = self.get_group_score();
+        garbage_counter.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -114,13 +129,49 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new("<>").solve_part_two();
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn test_2() {
+        let result = Solver::new("<random characters>").solve_part_two();
+        assert_eq!(result, "17");
+    }
+
+    #[test]
+    fn test_3() {
+        let result = Solver::new("<<<<>").solve_part_two();
+        assert_eq!(result, "3");
+    }
+
+    #[test]
+    fn test_4() {
+        let result = Solver::new("<{!>}>").solve_part_two();
+        assert_eq!(result, "2");
+    }
+
+    #[test]
+    fn test_5() {
+        let result = Solver::new("<!!>").solve_part_two();
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn test_6() {
+        let result = Solver::new("<!!!>>").solve_part_two();
+        assert_eq!(result, "0");
+    }
+
+    #[test]
+    fn test_7() {
+        let result = Solver::new(r#"<{o"i!a,<{i<a>"#).solve_part_two();
+        assert_eq!(result, "10");
+    }
+}
