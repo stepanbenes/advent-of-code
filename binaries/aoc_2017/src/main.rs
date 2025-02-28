@@ -25,9 +25,7 @@ fn main() {
         Box::new(day08::Solver::new(include_str!("../input/day08.txt"))),
         Box::new(day09::Solver::new(include_str!("../input/day09.txt"))),
         Box::new(day10::Solver::new(
-            &[
-                106, 118, 236, 1, 130, 0, 235, 254, 59, 205, 2, 87, 129, 25, 255, 118,
-            ],
+            "106,118,236,1,130,0,235,254,59,205,2,87,129,25,255,118",
             256,
         )),
     ];
