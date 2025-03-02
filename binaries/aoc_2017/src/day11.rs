@@ -31,12 +31,8 @@ impl Solver {
         }
         Solver { directions }
     }
-}
 
-impl SolverBase for Solver {
-    fn solve_part_one(&self) -> String {
-        let mut dir_table = [0u32; 6];
-
+    fn get_distance(dir_table: &mut [u32; 6]) -> u32 {
         let get_triplet_to_merge = |table: &[u32; 6]| {
             for center_index in 0..6 {
                 let left_index = if center_index == 0 {
@@ -69,11 +65,7 @@ impl SolverBase for Solver {
             None
         };
 
-        for direction in self.directions.iter() {
-            dir_table[*direction as usize] += 1;
-        }
-
-        while let Some((left_index, center_index, right_index)) = get_triplet_to_merge(&dir_table) {
+        while let Some((left_index, center_index, right_index)) = get_triplet_to_merge(dir_table) {
             let left_value = dir_table[left_index];
             let right_value = dir_table[right_index];
             let min_value = left_value.min(right_value);
@@ -82,7 +74,7 @@ impl SolverBase for Solver {
             dir_table[center_index] += min_value;
         }
 
-        while let Some((index, other_index)) = get_duplet_to_equalize(&dir_table) {
+        while let Some((index, other_index)) = get_duplet_to_equalize(dir_table) {
             let value = dir_table[index];
             let other_value = dir_table[other_index];
             let min_value = value.min(other_value);
@@ -90,11 +82,31 @@ impl SolverBase for Solver {
             dir_table[other_index] -= min_value;
         }
 
-        dir_table.iter().sum::<u32>().to_string()
+        let distance = dir_table.iter().sum::<u32>();
+        distance
+    }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        let mut dir_table = [0u32; 6];
+        for direction in self.directions.iter() {
+            dir_table[*direction as usize] += 1;
+        }
+        Solver::get_distance(&mut dir_table).to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut dir_table = [0u32; 6];
+        let mut max_distance = None;
+        for direction in self.directions.iter() {
+            dir_table[*direction as usize] += 1;
+            let distance = Solver::get_distance(&mut dir_table);
+            if max_distance.is_none() || max_distance.unwrap() < distance {
+                max_distance = Some(distance);
+            }
+        }
+        max_distance.unwrap().to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -135,13 +147,13 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new("ne,ne,sw,sw").solve_part_two();
+        assert_eq!(result, "2");
+    }
+}
