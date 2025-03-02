@@ -21,12 +21,10 @@ impl Solver {
         }
         Solver { connections }
     }
-}
 
-impl SolverBase for Solver {
-    fn solve_part_one(&self) -> String {
+    fn get_set(&self, root: u32) -> HashSet<u32> {
         let mut set = HashSet::new();
-        let mut current_set = vec![0];
+        let mut current_set = vec![root];
         while !current_set.is_empty() {
             while let Some(current) = current_set.pop() {
                 if !set.contains(&current) {
@@ -37,11 +35,31 @@ impl SolverBase for Solver {
                 }
             }
         }
+        set
+    }
+
+    fn get_all_sets(&self) -> HashMap<u32, HashSet<u32>> {
+        let mut all_roots: HashSet<u32> = self.connections.keys().copied().collect();
+        let mut result = HashMap::new();
+        while !all_roots.is_empty() {
+            let root = *all_roots.iter().next().unwrap();
+            let set = self.get_set(root);
+            all_roots.retain(|x| !set.contains(x));
+            result.insert(root, set);
+        }
+        result
+    }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        let set = self.get_set(0);
         set.len().to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let all_sets = self.get_all_sets();
+        all_sets.len().to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -49,7 +67,7 @@ impl SolverBase for Solver {
     }
 
     fn description(&self) -> &'static str {
-        ""
+        "Program connection sets"
     }
 }
 
@@ -73,19 +91,22 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new(r"0 <-> 2
-// 1 <-> 1
-// 2 <-> 0, 3, 4
-// 3 <-> 2, 4
-// 4 <-> 2, 3, 6
-// 5 <-> 6
-// 6 <-> 4, 5").solve_part_two();
-//         assert_eq!(result, "2");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r"0 <-> 2
+1 <-> 1
+2 <-> 0, 3, 4
+3 <-> 2, 4
+4 <-> 2, 3, 6
+5 <-> 6
+6 <-> 4, 5",
+        )
+        .solve_part_two();
+        assert_eq!(result, "2");
+    }
+}
