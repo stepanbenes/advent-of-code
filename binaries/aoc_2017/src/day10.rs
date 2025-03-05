@@ -4,12 +4,12 @@ use std::ops::Range;
 use solver::SolverBase;
 
 pub struct Solver {
-    input: &'static str,
+    input: String,
     element_count: usize,
 }
 
 impl Solver {
-    pub fn new(input: &'static str, element_count: usize) -> Self {
+    pub fn new(input: String, element_count: usize) -> Self {
         Solver {
             input,
             element_count,
@@ -53,7 +53,7 @@ impl Solver {
         }
     }
 
-    fn full_knot_hash(&self) -> String {
+    pub fn full_knot_hash(&self) -> String {
         // convert to ascii codes
         let mut lengths: Vec<usize> = self.input.bytes().map(|x| x as usize).collect();
         // extend with sequence
@@ -116,7 +116,7 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::new("3,4,1,5", 5).solve_part_one();
+        let result = Solver::new("3,4,1,5".to_owned(), 5).solve_part_one();
         assert_eq!(result, "12");
     }
 }
@@ -127,25 +127,25 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::new("", 256).solve_part_two();
+        let result = Solver::new("".to_owned(), 256).solve_part_two();
         assert_eq!(result, "a2582a3a0e66e6e86e3812dcb672a272");
     }
 
     #[test]
     fn test_2() {
-        let result = Solver::new("AoC 2017", 256).solve_part_two();
+        let result = Solver::new("AoC 2017".to_owned(), 256).solve_part_two();
         assert_eq!(result, "33efeb34ea91902bb2f59c9920caa6cd");
     }
 
     #[test]
     fn test_3() {
-        let result = Solver::new("1,2,3", 256).solve_part_two();
+        let result = Solver::new("1,2,3".to_owned(), 256).solve_part_two();
         assert_eq!(result, "3efbe78a8d82f29979031a4aa0b16a9d");
     }
 
     #[test]
     fn test_4() {
-        let result = Solver::new("1,2,4", 256).solve_part_two();
+        let result = Solver::new("1,2,4".to_owned(), 256).solve_part_two();
         assert_eq!(result, "63960835bcdc130f0b66d7ff4f6a5a8e");
     }
 }

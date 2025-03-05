@@ -144,6 +144,10 @@ impl SolverBase for Solver {
     fn description(&self) -> &'static str {
         "Packet scaners"
     }
+
+    fn skip_run(&self) -> bool {
+        true
+    }
 }
 
 #[cfg(test)]
