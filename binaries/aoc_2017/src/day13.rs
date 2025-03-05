@@ -70,10 +70,8 @@ impl Solver {
             period - mod_x
         }
     }
-}
 
-impl SolverBase for Solver {
-    fn solve_part_one(&self) -> String {
+    fn send_packet(&self, delay: u32, bailout_if_caught: bool) -> (bool, u32) {
         let mut scanner_positions = HashMap::new();
 
         for layer in &self.layers {
@@ -81,6 +79,14 @@ impl SolverBase for Solver {
         }
         let max_depth = self.layers.iter().map(|x| x.depth).max().unwrap();
         let mut severity = 0;
+        let mut was_caught = false;
+
+        for layer in &self.layers {
+            scanner_positions
+                .entry(layer.depth)
+                .and_modify(|x| *x = Solver::sawtooth_wave(delay, layer.range));
+        }
+
         for depth in 0..=max_depth {
             if let Some(layer) = self.layers.iter().find(|x| x.depth == depth) {
                 let is_caught = if let Some(&s) = scanner_positions.get(&layer.depth) {
@@ -90,7 +96,11 @@ impl SolverBase for Solver {
                 };
 
                 if is_caught {
+                    was_caught = true;
                     severity += layer.depth * layer.range;
+                    if bailout_if_caught {
+                        break;
+                    }
                 }
             }
 
@@ -101,17 +111,30 @@ impl SolverBase for Solver {
             for layer in &self.layers {
                 scanner_positions
                     .entry(layer.depth)
-                    .and_modify(|x| *x = Solver::sawtooth_wave(depth + 1, layer.range));
+                    .and_modify(|x| *x = Solver::sawtooth_wave(delay + depth + 1, layer.range));
             }
 
             //self.print_layers(&scanner_positions, depth);
         }
 
+        (was_caught, severity)
+    }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        let (_was_caught, severity) = self.send_packet(0, false);
         severity.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        for delay in 0..u32::MAX {
+            let (was_caught, _) = self.send_packet(delay, true);
+            if !was_caught {
+                return delay.to_string();
+            }
+        }
+        panic!("no solution")
     }
 
     fn day_number(&self) -> usize {
@@ -175,13 +198,19 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r"0: 3
+1: 2
+4: 4
+6: 4",
+        )
+        .solve_part_two();
+        assert_eq!(result, "10");
+    }
+}
