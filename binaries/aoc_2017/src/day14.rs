@@ -1,7 +1,9 @@
 use solver::SolverBase;
-use std::fmt::Write;
+use std::{collections::HashSet, fmt::Write};
 
 use crate::day10;
+
+type Disk = [[bool; 128]; 128];
 
 pub struct Solver {
     input: &'static str,
@@ -10,6 +12,58 @@ pub struct Solver {
 impl Solver {
     pub fn new(input: &'static str) -> Self {
         Solver { input }
+    }
+
+    fn get_disk(&self) -> Disk {
+        fn hex_to_binary(hex: &str, disk_partition: &mut [bool]) {
+            let ones_and_zeroes = hex.chars().fold(String::new(), |mut acc, c| {
+                _ = write!(&mut acc, "{:04b}", c.to_digit(16).unwrap());
+                acc
+            });
+
+            for (i, c) in ones_and_zeroes.chars().enumerate() {
+                disk_partition[i] = c == '1';
+            }
+        }
+        let mut disk: Disk = [[false; 128]; 128];
+        for (i, row) in disk.iter_mut().enumerate() {
+            let hasher_input = format!("{}-{}", self.input, i);
+            let knot_hash = day10::Solver::new(hasher_input, 256).full_knot_hash();
+            hex_to_binary(&knot_hash, row);
+        }
+        disk
+    }
+
+    fn dfs(start: (usize, usize), disk: &Disk, visited: &mut HashSet<(usize, usize)>) {
+        if disk[start.0][start.1] && !visited.contains(&start) {
+            visited.insert(start);
+            if start.0 > 0 {
+                Solver::dfs((start.0 - 1, start.1), disk, visited);
+            }
+            if start.0 < 127 {
+                Solver::dfs((start.0 + 1, start.1), disk, visited);
+            }
+            if start.1 > 0 {
+                Solver::dfs((start.0, start.1 - 1), disk, visited);
+            }
+            if start.1 < 127 {
+                Solver::dfs((start.0, start.1 + 1), disk, visited);
+            }
+        }
+    }
+
+    fn get_number_of_regions(disk: &Disk) -> usize {
+        let mut visited = HashSet::new();
+        let mut counter = 0;
+        for i in 0..128 {
+            for j in 0..128 {
+                if disk[i][j] && !visited.contains(&(i, j)) {
+                    counter += 1;
+                    Solver::dfs((i, j), disk, &mut visited);
+                }
+            }
+        }
+        counter
     }
 }
 
@@ -50,7 +104,9 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let disk = self.get_disk();
+        let number_of_regions = Solver::get_number_of_regions(&disk);
+        number_of_regions.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -73,13 +129,13 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new("flqrgnkx").solve_part_two();
+        assert_eq!(result, "1242");
+    }
+}
