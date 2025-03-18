@@ -1,6 +1,5 @@
-use std::str::FromStr;
-
 use solver::SolverBase;
+use std::str::FromStr;
 
 #[derive(Debug)]
 enum DanceMove {
@@ -51,8 +50,8 @@ impl Solver {
         }
     }
 
-    fn dance(&self) -> String {
-        let mut programs = self.init_state.chars().collect::<Vec<_>>();
+    #[allow(dead_code)]
+    fn dance(&self, programs: &mut [char]) {
         for dance_move in self.dance_moves.iter() {
             match *dance_move {
                 DanceMove::Spin(n) => {
@@ -72,17 +71,58 @@ impl Solver {
                 }
             }
         }
-        programs.iter().collect()
+    }
+
+    fn dance_optimized(
+        program_count: usize,
+        dance_moves: &Vec<DanceMove>,
+        repeat: usize,
+    ) -> String {
+        let mut table: Vec<_> = (0..program_count).collect();
+        let start_point = table.clone();
+        let mut r = 0;
+        while r < repeat {
+            for dance_move in dance_moves {
+                match *dance_move {
+                    DanceMove::Spin(n) => {
+                        table.rotate_right(n);
+                    }
+                    DanceMove::Exchange(i, j) => {
+                        table.swap(i, j);
+                    }
+                    DanceMove::Partner(a, b) => {
+                        let idx1 = table
+                            .iter()
+                            .position(|&x| x == (a as u8 - b'a') as usize)
+                            .unwrap();
+                        let idx2 = table
+                            .iter()
+                            .position(|&x| x == (b as u8 - b'a') as usize)
+                            .unwrap();
+                        table.swap(idx1, idx2);
+                    }
+                }
+            }
+            if table == start_point {
+                let skip = (repeat / (r + 1) - 1) * (r + 1);
+                r += skip;
+            }
+            r += 1;
+        }
+        table
+            .iter()
+            .map(|x| (b'a' as usize + x) as u8 as char)
+            .collect()
     }
 }
 
 impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        self.dance()
+        Solver::dance_optimized(self.init_state.len(), &self.dance_moves, 1)
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        Solver::dance_optimized(self.init_state.len(), &self.dance_moves, 1_000_000_000)
     }
 
     fn day_number(&self) -> usize {
@@ -123,13 +163,20 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::dance_optimized(
+            5,
+            &"s1,x3/4,pe/b"
+                .split(',')
+                .map(|x| DanceMove::from_str(x).unwrap())
+                .collect::<Vec<_>>(),
+            2,
+        );
+        assert_eq!(result, "ceadb");
+    }
+}
