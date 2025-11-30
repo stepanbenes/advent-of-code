@@ -40,7 +40,7 @@ where
         match &self.head {
             Some(head) => {
                 let mut tail = head.clone();
-                while tail.borrow().next.as_ref().map_or(false, |n| !Rc::ptr_eq(n, head)) {
+                while tail.borrow().next.as_ref().is_some_and(|n| !Rc::ptr_eq(n, head)) {
                     let new_tail = tail.borrow().next.as_ref().unwrap().clone();
                     tail = new_tail;
                 }
@@ -66,7 +66,7 @@ where
         }));
         
         let mut tail = node.clone();
-        while tail.borrow().next.as_ref().map_or(false, |n| !Rc::ptr_eq(n, &node)) {
+        while tail.borrow().next.as_ref().is_some_and(|n| !Rc::ptr_eq(n, &node)) {
             let new_tail = tail.borrow().next.as_ref().unwrap().clone();
             tail = new_tail;
         }

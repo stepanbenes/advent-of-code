@@ -209,10 +209,10 @@ fn main() {
             "day 24, decimal output on the wires starting with z: {}",
             day24::decimal_output_on_wires()
         );
-    }
 
-    println!(
-        "day 25, count of unique lock pin pairs that fit together without overlapping: {}",
-        day25::count_of_unique_lock_pin_pairs_that_fit_together_without_overlapping()
-    );
+        println!(
+            "day 25, count of unique lock pin pairs that fit together without overlapping: {}",
+            day25::count_of_unique_lock_pin_pairs_that_fit_together_without_overlapping()
+        );
+    }
 }
