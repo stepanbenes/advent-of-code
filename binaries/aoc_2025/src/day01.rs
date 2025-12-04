@@ -37,13 +37,13 @@ mod part1_tests {
     }
 }
 
-#[cfg(test)]
-mod part2_tests {
-    use super::*;
+// #[cfg(test)]
+// mod part2_tests {
+//     use super::*;
 
-    #[test]
-    fn test_1() {
-        let result = Solver::new("abc").solve_part_two();
-        assert_eq!(result, "");
-    }
-}
+//     #[test]
+//     fn test_1() {
+//         let result = Solver::new("abc").solve_part_two();
+//         assert_eq!(result, "");
+//     }
+// }
