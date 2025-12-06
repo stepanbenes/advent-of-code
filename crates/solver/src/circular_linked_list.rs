@@ -12,7 +12,10 @@ struct Node<T> {
     next: Link<T>,
 }
 
-impl<T> Node<T> where T: Copy {
+impl<T> Node<T>
+where
+    T: Copy,
+{
     fn get_value(&self) -> T {
         self.value
     }
@@ -32,15 +35,17 @@ where
     }
 
     fn append(&mut self, value: T) -> NodeRef<T> {
-        let new_node = Rc::new(RefCell::new(Node {
-            value,
-            next: None,
-        }));
+        let new_node = Rc::new(RefCell::new(Node { value, next: None }));
 
         match &self.head {
             Some(head) => {
                 let mut tail = head.clone();
-                while tail.borrow().next.as_ref().is_some_and(|n| !Rc::ptr_eq(n, head)) {
+                while tail
+                    .borrow()
+                    .next
+                    .as_ref()
+                    .is_some_and(|n| !Rc::ptr_eq(n, head))
+                {
                     let new_tail = tail.borrow().next.as_ref().unwrap().clone();
                     tail = new_tail;
                 }
@@ -60,13 +65,15 @@ where
     }
 
     fn insert_after_node(&mut self, node: NodeRef<T>, value: T) -> NodeRef<T> {
-        let new_node = Rc::new(RefCell::new(Node {
-            value,
-            next: None,
-        }));
-        
+        let new_node = Rc::new(RefCell::new(Node { value, next: None }));
+
         let mut tail = node.clone();
-        while tail.borrow().next.as_ref().is_some_and(|n| !Rc::ptr_eq(n, &node)) {
+        while tail
+            .borrow()
+            .next
+            .as_ref()
+            .is_some_and(|n| !Rc::ptr_eq(n, &node))
+        {
             let new_tail = tail.borrow().next.as_ref().unwrap().clone();
             tail = new_tail;
         }
@@ -100,11 +107,11 @@ mod circular_linked_list_tests {
     #[test]
     fn test_1() {
         let mut list = CircularLinkedList::new();
-    
+
         list.append(1);
         list.append(2);
         list.append(3);
-    
+
         list.display(10);
 
         assert_eq!(0, 1);

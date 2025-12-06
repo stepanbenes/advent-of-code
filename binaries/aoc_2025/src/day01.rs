@@ -24,9 +24,7 @@ impl Solver {
                 }
             })
             .collect();
-        Solver {
-            rotations,
-        }
+        Solver { rotations }
     }
 }
 
@@ -55,13 +53,20 @@ impl SolverBase for Solver {
         let mut dial = 50;
         let full = 100;
         let mut zero_reached_counter = 0;
+        let mirror_dial = |d| (full - d) % full;
         for r in &self.rotations {
             match r {
                 Rotation::Left(distance) => {
+                    dial = mirror_dial(dial);
 
+                    zero_reached_counter += (dial + distance) / full;
+                    dial = (dial + distance) % full;
+
+                    dial = mirror_dial(dial);
                 }
                 Rotation::Right(distance) => {
-
+                    zero_reached_counter += (dial + distance) / full;
+                    dial = (dial + distance) % full;
                 }
             }
         }
@@ -83,7 +88,8 @@ mod part1_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::new(r"L68
+        let result = Solver::new(
+            r"L68
 L30
 R48
 L5
@@ -92,7 +98,9 @@ L55
 L1
 L99
 R14
-L82").solve_part_one();
+L82",
+        )
+        .solve_part_one();
         assert_eq!(result, "3");
     }
 }
@@ -103,7 +111,8 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::new(r"L68
+        let result = Solver::new(
+            r"L68
 L30
 R48
 L5
@@ -112,7 +121,9 @@ L55
 L1
 L99
 R14
-L82").solve_part_two();
+L82",
+        )
+        .solve_part_two();
         assert_eq!(result, "6");
     }
 }
