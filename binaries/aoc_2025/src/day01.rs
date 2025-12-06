@@ -74,11 +74,11 @@ impl SolverBase for Solver {
     }
 
     fn day_number(&self) -> usize {
-        0
+        1
     }
 
     fn description(&self) -> &'static str {
-        ""
+        "Secret Entrance"
     }
 }
 
