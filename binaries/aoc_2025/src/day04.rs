@@ -1,0 +1,125 @@
+use solver::SolverBase;
+
+pub struct Solver {
+    grid: Vec<Vec<bool>>,
+}
+
+impl Solver {
+    pub fn new(input: &'static str) -> Self {
+        let grid = input
+            .lines()
+            .map(|line| {
+                line.bytes()
+                    .map(|x| match x {
+                        b'@' => true,
+                        b'.' => false,
+                        _ => panic!("unrecognized grid location"),
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        Solver { grid }
+    }
+
+    fn get_number_of_neighbors(&self, i: usize, j: usize) -> usize {
+        let mut count = 0;
+
+        if j > 0 {
+            if self.grid[i][j - 1] {
+                count += 1;
+            }
+            if i > 0 && self.grid[i - 1][j - 1] {
+                count += 1;
+            }
+        }
+
+        if i > 0 {
+            if self.grid[i - 1][j] {
+                count += 1;
+            }
+            if j < self.grid[0].len() - 1 && self.grid[i - 1][j + 1] {
+                count += 1;
+            }
+        }
+
+        if j < self.grid[0].len() - 1 {
+            if self.grid[i][j + 1] {
+                count += 1;
+            }
+            if i < self.grid.len() - 1 && self.grid[i + 1][j + 1] {
+                count += 1;
+            }
+        }
+
+        if i < self.grid.len() - 1 {
+            if self.grid[i + 1][j] {
+                count += 1;
+            }
+            if j > 0 && self.grid[i + 1][j - 1] {
+                count += 1;
+            }
+        }
+
+        count
+    }
+}
+
+impl SolverBase for Solver {
+    fn solve_part_one(&self) -> String {
+        let mut sum = 0;
+        for (i, row) in self.grid.iter().enumerate() {
+            for (j, value) in row.iter().enumerate() {
+                if *value && self.get_number_of_neighbors(i, j) < 4 {
+                    sum += 1;
+                }
+            }
+        }
+        sum.to_string()
+    }
+
+    fn solve_part_two(&self) -> String {
+        "".to_string()
+    }
+
+    fn day_number(&self) -> usize {
+        4
+    }
+
+    fn description(&self) -> &'static str {
+        "Printing Department"
+    }
+}
+
+#[cfg(test)]
+mod part1_tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r"..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.",
+        )
+        .solve_part_one();
+        assert_eq!(result, "13");
+    }
+}
+
+// #[cfg(test)]
+// mod part2_tests {
+//     use super::*;
+
+//     #[test]
+//     fn test_1() {
+//         let result = Solver::new("abc").solve_part_two();
+//         assert_eq!(result, "0");
+//     }
+// }
