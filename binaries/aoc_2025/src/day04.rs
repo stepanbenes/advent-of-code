@@ -21,41 +21,41 @@ impl Solver {
         Solver { grid }
     }
 
-    fn get_number_of_neighbors(&self, i: usize, j: usize) -> usize {
+    fn get_number_of_neighbors(grid: &[Vec<bool>], i: usize, j: usize) -> usize {
         let mut count = 0;
 
         if j > 0 {
-            if self.grid[i][j - 1] {
+            if grid[i][j - 1] {
                 count += 1;
             }
-            if i > 0 && self.grid[i - 1][j - 1] {
+            if i > 0 && grid[i - 1][j - 1] {
                 count += 1;
             }
         }
 
         if i > 0 {
-            if self.grid[i - 1][j] {
+            if grid[i - 1][j] {
                 count += 1;
             }
-            if j < self.grid[0].len() - 1 && self.grid[i - 1][j + 1] {
-                count += 1;
-            }
-        }
-
-        if j < self.grid[0].len() - 1 {
-            if self.grid[i][j + 1] {
-                count += 1;
-            }
-            if i < self.grid.len() - 1 && self.grid[i + 1][j + 1] {
+            if j < grid[0].len() - 1 && grid[i - 1][j + 1] {
                 count += 1;
             }
         }
 
-        if i < self.grid.len() - 1 {
-            if self.grid[i + 1][j] {
+        if j < grid[0].len() - 1 {
+            if grid[i][j + 1] {
                 count += 1;
             }
-            if j > 0 && self.grid[i + 1][j - 1] {
+            if i < grid.len() - 1 && grid[i + 1][j + 1] {
+                count += 1;
+            }
+        }
+
+        if i < grid.len() - 1 {
+            if grid[i + 1][j] {
+                count += 1;
+            }
+            if j > 0 && grid[i + 1][j - 1] {
                 count += 1;
             }
         }
@@ -69,7 +69,7 @@ impl SolverBase for Solver {
         let mut sum = 0;
         for (i, row) in self.grid.iter().enumerate() {
             for (j, value) in row.iter().enumerate() {
-                if *value && self.get_number_of_neighbors(i, j) < 4 {
+                if *value && Solver::get_number_of_neighbors(&self.grid, i, j) < 4 {
                     sum += 1;
                 }
             }
@@ -78,7 +78,25 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut grid = self.grid.clone();
+        let mut total_sum = 0;
+        loop {
+            let mut sum = 0;
+            for i in 0..grid.len() {
+                let row_len = grid[i].len();
+                for j in 0..row_len {
+                    if grid[i][j] && Solver::get_number_of_neighbors(&grid, i, j) < 4 {
+                        sum += 1;
+                        grid[i][j] = false;
+                    }
+                }
+            }
+            if sum == 0 {
+                break;
+            }
+            total_sum += sum;
+        }
+        total_sum.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -113,13 +131,25 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r"..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.",
+        )
+        .solve_part_two();
+        assert_eq!(result, "43");
+    }
+}
