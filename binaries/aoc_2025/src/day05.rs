@@ -46,6 +46,7 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
+        // TODO:
         "".to_string()
     }
 
@@ -82,13 +83,23 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(r"3-5
+10-14
+16-20
+12-18
+
+1
+5
+8
+11
+17
+32").solve_part_two();
+        assert_eq!(result, "14");
+    }
+}
