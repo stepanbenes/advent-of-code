@@ -46,8 +46,25 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        // TODO:
-        "".to_string()
+        let mut ranges = self.fresh_ranges.clone();
+        ranges.sort_by_key(|range| *range.start());
+        let mut current = 1;
+        while current < ranges.len() {
+            let previous = current - 1;
+            if ranges[current].start() <= ranges[previous].end() {
+                if ranges[current].end() > ranges[previous].end() {
+                    ranges[previous] = *ranges[previous].start()..=*ranges[current].end();
+                }
+                ranges.remove(current);
+            } else {
+                current += 1;
+            }
+        }
+        let mut total_count = 0;
+        for range in ranges {
+            total_count += range.end() - range.start() + 1;
+        }
+        total_count.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -89,7 +106,8 @@ mod part2_tests {
 
     #[test]
     fn test_1() {
-        let result = Solver::new(r"3-5
+        let result = Solver::new(
+            r"3-5
 10-14
 16-20
 12-18
@@ -99,7 +117,9 @@ mod part2_tests {
 8
 11
 17
-32").solve_part_two();
+32",
+        )
+        .solve_part_two();
         assert_eq!(result, "14");
     }
 }
