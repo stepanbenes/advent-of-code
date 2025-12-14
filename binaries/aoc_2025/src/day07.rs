@@ -9,7 +9,7 @@ pub enum Location {
     Empty,
     Start,
     Splitter,
-    Beam,
+    Visited(u64),
 }
 
 impl Solver {
@@ -31,37 +31,61 @@ impl Solver {
         Solver { grid }
     }
 
-    pub fn tachion_beam_traverse(grid: &mut [Vec<Location>]) -> usize {
-        fn find_start(grid: &[Vec<Location>]) -> Option<(usize, usize)> {
-            for (i, row) in grid.iter().enumerate() {
-                for (j, location) in row.iter().enumerate() {
-                    if *location == Location::Start {
-                        return Some((i, j));
-                    }
+    fn find_start(grid: &[Vec<Location>]) -> Option<(usize, usize)> {
+        for (i, row) in grid.iter().enumerate() {
+            for (j, location) in row.iter().enumerate() {
+                if *location == Location::Start {
+                    return Some((i, j));
                 }
             }
-            None
         }
+        None
+    }
 
+    pub fn tachion_beam_traverse(grid: &mut [Vec<Location>]) -> usize {
         fn dfs(grid: &mut [Vec<Location>], location: (usize, usize)) -> usize {
             if location.0 >= grid.len() {
                 return 0; // left the grid
             }
             match grid[location.0][location.1] {
                 Location::Start => dfs(grid, (location.0 + 1, location.1)), // continue down
-                Location::Beam => 0,                                        // already occupied
+                Location::Visited(_) => 0,                                  // already visited
                 Location::Splitter => {
                     1 + dfs(grid, (location.0 + 1, location.1 - 1))
                         + dfs(grid, (location.0 + 1, location.1 + 1))
                 } // split beam, add +1
                 Location::Empty => {
-                    grid[location.0][location.1] = Location::Beam; // mark as ocuppied
+                    grid[location.0][location.1] = Location::Visited(1); // mark as visited
                     dfs(grid, (location.0 + 1, location.1)) // continue down
                 }
             }
         }
 
-        dfs(grid, find_start(grid).unwrap())
+        dfs(grid, Solver::find_start(grid).unwrap())
+    }
+
+    pub fn tachion_beam_path_counter(grid: &mut [Vec<Location>]) -> u64 {
+        fn dfs(grid: &mut [Vec<Location>], location: (usize, usize)) -> u64 {
+            if location.0 >= grid.len() {
+                return 1; // left the grid
+            }
+            match grid[location.0][location.1] {
+                Location::Start => dfs(grid, (location.0 + 1, location.1)), // continue down
+                Location::Visited(count) => count,                          // already occupied
+                Location::Splitter => {
+                    let left_count = dfs(grid, (location.0 + 1, location.1 - 1));
+                    let right_count = dfs(grid, (location.0 + 1, location.1 + 1));
+                    left_count + right_count
+                } // split beam, add +1
+                Location::Empty => {
+                    let count = dfs(grid, (location.0 + 1, location.1)); // continue down
+                    grid[location.0][location.1] = Location::Visited(count); // mark as visited
+                    count
+                }
+            }
+        }
+
+        dfs(grid, Solver::find_start(grid).unwrap())
     }
 }
 
@@ -73,7 +97,9 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        let mut grid = self.grid.clone();
+        let path_count = Solver::tachion_beam_path_counter(&mut grid);
+        path_count.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -114,13 +140,31 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r".......S.......
+...............
+.......^.......
+...............
+......^.^......
+...............
+.....^.^.^.....
+...............
+....^.^...^....
+...............
+...^.^...^.^...
+...............
+..^...^.....^..
+...............
+.^.^.^.^.^...^.
+...............",
+        )
+        .solve_part_two();
+        assert_eq!(result, "40");
+    }
+}
