@@ -2,12 +2,20 @@ use std::cmp::Ordering;
 
 use solver::SolverBase;
 
+use solver::UnionFind;
+
 pub struct Solver {
     points: Vec<Point>,
+    pair_count: usize,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct Point(i32, i32, i32);
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+pub struct Point {
+    id: u32,
+    x: i32,
+    y: i32,
+    z: i32,
+}
 
 #[derive(Debug)]
 pub struct PointPair<'a> {
@@ -18,26 +26,32 @@ pub struct PointPair<'a> {
 
 impl<'a> PointPair<'a> {
     pub fn get_distance_squared(a: &'a Point, b: &'a Point) -> f64 {
-        let dx = b.0 as f64 - a.0 as f64;
-        let dy = b.1 as f64 - a.1 as f64;
-        let dz = b.2 as f64 - a.2 as f64;
+        let dx = b.x as f64 - a.x as f64;
+        let dy = b.y as f64 - a.y as f64;
+        let dz = b.z as f64 - a.z as f64;
         dx * dx + dy * dy + dz * dz
     }
 }
 
 impl Solver {
-    pub fn new(input: &'static str) -> Self {
+    pub fn new(input: &'static str, pair_count: usize) -> Self {
         let points = input
             .lines()
-            .map(|line| {
+            .enumerate()
+            .map(|(index, line)| {
                 let mut tokens = line.split(',');
                 let x = tokens.next().unwrap().parse().unwrap();
                 let y = tokens.next().unwrap().parse().unwrap();
                 let z = tokens.next().unwrap().parse().unwrap();
-                Point(x, y, z)
+                Point {
+                    id: index as u32,
+                    x,
+                    y,
+                    z,
+                }
             })
             .collect();
-        Solver { points }
+        Solver { points, pair_count }
     }
 }
 
@@ -62,8 +76,21 @@ impl SolverBase for Solver {
         }
 
         pairs.sort_by(comparer);
-        let first = pairs.first().unwrap();
-        format!("({:?}, {:?})", first.a, first.b)
+
+        let mut uf = UnionFind::default();
+
+        for pair in pairs.iter().take(self.pair_count) {
+            uf.union(pair.a, pair.b);
+        }
+
+        let result: u32 = uf
+            .groups_by_size()
+            .into_iter()
+            .take(3)
+            .map(|g| g.len() as u32)
+            .product();
+
+        result.to_string()
     }
 
     fn solve_part_two(&self) -> String {
@@ -106,6 +133,7 @@ mod part1_tests {
 862,61,35
 984,92,344
 425,690,689",
+            10,
         )
         .solve_part_one();
         assert_eq!(result, "40");

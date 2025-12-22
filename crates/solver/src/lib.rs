@@ -1,4 +1,7 @@
 mod circular_linked_list;
+mod union_find;
+
+pub use union_find::*;
 
 pub trait SolverBase {
     fn solve_part_one(&self) -> String {
