@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::VecDeque, str::FromStr};
 
 use solver::SolverBase;
 
@@ -24,7 +24,7 @@ impl FromStr for Light {
         fn pattern_to_bitmask(pattern: &str) -> u32 {
             pattern
                 .chars()
-                .rev()
+                //.rev()
                 .enumerate()
                 .fold(
                     0u32,
@@ -91,8 +91,28 @@ impl Solver {
 
 impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        println!("{:?}", self.lights);
-        "".to_string()
+        fn bfs(light: &Light) -> usize {
+            let mut queue: VecDeque<(u32, usize)> = VecDeque::new();
+            queue.push_back((0, 0));
+            while let Some((pattern, depth)) = queue.pop_front() {
+                for toggle_indices in &light.toggles {
+                    let new_pattern = pattern ^ toggle_indices;
+                    if new_pattern == light.light_diagram {
+                        return depth + 1;
+                    }
+                    queue.push_back((new_pattern, depth + 1));
+                }
+            }
+            unreachable!()
+        }
+
+        let mut sum = 0;
+
+        for light in &self.lights {
+            sum += bfs(light);
+        }
+
+        sum.to_string()
     }
 
     fn solve_part_two(&self) -> String {
