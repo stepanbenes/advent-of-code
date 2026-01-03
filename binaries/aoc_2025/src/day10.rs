@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, str::FromStr};
+use std::{cmp::Ordering, collections::VecDeque, str::FromStr};
 
 use solver::SolverBase;
 
@@ -10,6 +10,7 @@ pub struct Solver {
 pub struct Light {
     light_diagram: u32,
     toggles: Vec<u32>,
+    toggle_indices: Vec<Vec<u32>>,
     joltages: Vec<u32>,
 }
 
@@ -22,16 +23,12 @@ impl FromStr for Light {
 
         // Helper to convert pattern to bitmask
         fn pattern_to_bitmask(pattern: &str) -> u32 {
-            pattern
-                .chars()
-                //.rev()
-                .enumerate()
-                .fold(
-                    0u32,
-                    |mask, (i, c)| {
-                        if c == '#' { mask | (1 << i) } else { mask }
-                    },
-                )
+            pattern.chars().enumerate().fold(
+                0u32,
+                |mask, (i, c)| {
+                    if c == '#' { mask | (1 << i) } else { mask }
+                },
+            )
         }
 
         // 1. Extract pattern
@@ -54,13 +51,20 @@ impl FromStr for Light {
         }
 
         // 2. All (...) groups
-        let togle_indices: Vec<u32> = parts[1..parts.len() - 1]
+        let toggles: Vec<u32> = parts[1..parts.len() - 1]
             .iter()
             .filter(|s| s.starts_with('('))
             .map(|s| to_bitmask(&parse_paren(s)))
             .collect();
 
-        // 3. Parse {...}
+        // 3. All (...) groups
+        let toggle_indices: Vec<Vec<u32>> = parts[1..parts.len() - 1]
+            .iter()
+            .filter(|s| s.starts_with('('))
+            .map(|s| parse_paren(s))
+            .collect();
+
+        // 4. Parse {...}
         let joltages: Vec<u32> = parts
             .last()
             .unwrap()
@@ -72,7 +76,8 @@ impl FromStr for Light {
 
         Ok(Light {
             light_diagram: diagram_pattern,
-            toggles: togle_indices,
+            toggles,
+            toggle_indices,
             joltages,
         })
     }
@@ -106,17 +111,44 @@ impl SolverBase for Solver {
             unreachable!()
         }
 
-        let mut sum = 0;
-
-        for light in &self.lights {
-            sum += bfs(light);
-        }
-
+        let sum: usize = self.lights.iter().map(bfs).sum();
         sum.to_string()
     }
 
     fn solve_part_two(&self) -> String {
-        "".to_string()
+        fn bfs(light: &Light) -> usize {
+            let mut queue: VecDeque<(Vec<u32>, usize)> = VecDeque::new();
+            queue.push_back((vec![0; light.joltages.len()], 0));
+            while let Some((pattern, depth)) = queue.pop_front() {
+                for indices in &light.toggle_indices {
+                    let mut new_pattern = pattern.clone();
+                    for index in indices {
+                        new_pattern[*index as usize] += 1;
+                    }
+                    match compare_patterns(&new_pattern, &light.joltages) {
+                        Ordering::Equal => return depth + 1,
+                        Ordering::Less => queue.push_back((new_pattern, depth + 1)),
+                        Ordering::Greater => {}
+                    }
+                }
+            }
+            unreachable!()
+        }
+
+        fn compare_patterns(a: &[u32], b: &[u32]) -> Ordering {
+            if a == b {
+                return Ordering::Equal;
+            }
+            for i in 0..a.len() {
+                if a[i].cmp(&b[i]) == Ordering::Greater {
+                    return Ordering::Greater;
+                }
+            }
+            Ordering::Less
+        }
+
+        let sum: usize = self.lights.iter().map(bfs).sum();
+        sum.to_string()
     }
 
     fn day_number(&self) -> usize {
@@ -144,13 +176,18 @@ mod part1_tests {
     }
 }
 
-// #[cfg(test)]
-// mod part2_tests {
-//     use super::*;
+#[cfg(test)]
+mod part2_tests {
+    use super::*;
 
-//     #[test]
-//     fn test_1() {
-//         let result = Solver::new("abc").solve_part_two();
-//         assert_eq!(result, "0");
-//     }
-// }
+    #[test]
+    fn test_1() {
+        let result = Solver::new(
+            r"[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
+[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
+[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}",
+        )
+        .solve_part_two();
+        assert_eq!(result, "33");
+    }
+}
