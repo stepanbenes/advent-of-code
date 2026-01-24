@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, collections::VecDeque, str::FromStr};
+use std::{collections::VecDeque, str::FromStr};
 
 use solver::SolverBase;
 
@@ -116,38 +116,11 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        fn bfs(light: &Light) -> usize {
-            let mut queue: VecDeque<(Vec<u32>, usize)> = VecDeque::new();
-            queue.push_back((vec![0; light.joltages.len()], 0));
-            while let Some((pattern, depth)) = queue.pop_front() {
-                for indices in &light.toggle_indices {
-                    let mut new_pattern = pattern.clone();
-                    for index in indices {
-                        new_pattern[*index as usize] += 1;
-                    }
-                    match compare_patterns(&new_pattern, &light.joltages) {
-                        Ordering::Equal => return depth + 1,
-                        Ordering::Less => queue.push_back((new_pattern, depth + 1)),
-                        Ordering::Greater => {}
-                    }
-                }
-            }
-            unreachable!()
+        fn solve(light: &Light) -> usize {
+            todo!("use linear_system_solver::solve_smallest_nonnegative_integer to solve")
         }
 
-        fn compare_patterns(a: &[u32], b: &[u32]) -> Ordering {
-            if a == b {
-                return Ordering::Equal;
-            }
-            for i in 0..a.len() {
-                if a[i].cmp(&b[i]) == Ordering::Greater {
-                    return Ordering::Greater;
-                }
-            }
-            Ordering::Less
-        }
-
-        let sum: usize = self.lights.iter().map(bfs).sum();
+        let sum: usize = self.lights.iter().map(solve).sum();
         sum.to_string()
     }
 
