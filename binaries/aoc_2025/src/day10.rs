@@ -116,12 +116,7 @@ impl SolverBase for Solver {
     }
 
     fn solve_part_two(&self) -> String {
-        fn solve(light: &Light) -> usize {
-            todo!("use linear_system_solver::solve_smallest_nonnegative_integer to solve")
-        }
-
-        let sum: usize = self.lights.iter().map(solve).sum();
-        sum.to_string()
+        todo!()
     }
 
     fn day_number(&self) -> usize {
