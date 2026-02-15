@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, str::FromStr};
+use std::str::FromStr;
 
 use solver::SolverBase;
 
@@ -9,9 +9,106 @@ pub struct Solver {
 #[derive(Debug)]
 pub struct Light {
     light_diagram: u32,
-    toggles: Vec<u32>,
     toggle_indices: Vec<Vec<u32>>,
-    joltages: Vec<u32>,
+    joltages: Vec<i32>,
+}
+
+fn fewest_presses(light: &Light) -> usize {
+    let binary_buttons = get_binary_buttons(&light.toggle_indices);
+    for subset in subsets(&binary_buttons) {
+        if subset.iter().fold(0, |a, &b| a ^ b) == light.light_diagram {
+            return subset.len();
+        }
+    }
+    unreachable!()
+}
+
+fn get_binary_buttons(buttons: &[Vec<u32>]) -> Vec<u32> {
+    buttons
+        .iter()
+        .map(|b| b.iter().map(|n| 1u32 << n).sum())
+        .collect()
+}
+
+// I gave up, went to Reddit and found this hint:
+// https://www.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
+// Find all possible sets of buttons you can push so that the remaining voltages are even, and divide by 2 and recurse.
+fn fewest_joltage_presses(light: &Light) -> usize {
+    let binary_buttons = get_binary_buttons(&light.toggle_indices);
+    let subset_xors: Vec<_> = subsets(&binary_buttons)
+        .iter()
+        .map(|subset| (subset.to_owned(), subset.iter().fold(0, |a, &b| a ^ b)))
+        .collect();
+    fewest_joltage_presses_recur(&subset_xors, &light.joltages).unwrap()
+}
+
+fn fewest_joltage_presses_recur(
+    subset_xors: &[(Vec<u32>, u32)],
+    joltages: &[i32],
+) -> Option<usize> {
+    if joltages.iter().all(|&j| j == 0) {
+        return Some(0);
+    }
+    let binary_joltages = get_binary_joltages(joltages);
+    let mut best = None;
+    for (subset, xor) in subset_xors {
+        if *xor == binary_joltages {
+            let new_joltages = get_new_joltages(joltages, subset);
+            if new_joltages.iter().all(|&j| j >= 0) {
+                let press_count = fewest_joltage_presses_recur(subset_xors, &new_joltages)
+                    .map(|c| subset.len() + 2 * c);
+                best = best.min(press_count).or(best).or(press_count);
+            }
+        }
+    }
+    best
+}
+
+fn get_new_joltages(joltages: &[i32], subset: &[u32]) -> Vec<i32> {
+    let mut new_joltages = Vec::new();
+    let mut mask = 1;
+    for &joltage in joltages {
+        new_joltages.push((joltage - subset.iter().filter(|&b| b & mask != 0).count() as i32) / 2);
+        mask <<= 1;
+    }
+    new_joltages
+}
+
+fn get_binary_joltages(joltages: &[i32]) -> u32 {
+    joltages
+        .iter()
+        .enumerate()
+        .map(|(i, j)| ((1 << i) * (j % 2)) as u32)
+        .sum()
+}
+
+fn subsets<T: Copy>(set: &[T]) -> Vec<Vec<T>> {
+    let mut subsets: Vec<Vec<T>> = Vec::new();
+    for count in 0..=set.len() {
+        subsets.extend(get_combinations(set, count));
+    }
+    subsets
+}
+
+fn get_combinations<T: Copy>(set: &[T], count: usize) -> Vec<Vec<T>> {
+    if count == 0 {
+        vec![Vec::new()]
+    } else {
+        set[..set.len() - count + 1]
+            .iter()
+            .enumerate()
+            .flat_map(|(i, &t)| {
+                get_combinations(&set[i + 1..], count - 1)
+                    .iter()
+                    .map(|c| {
+                        let mut c1 = c.clone();
+                        c1.push(t);
+                        c1
+                    })
+                    .collect::<Vec<Vec<T>>>()
+            })
+            .collect()
+    }
 }
 
 impl FromStr for Light {
@@ -45,38 +142,25 @@ impl FromStr for Light {
                 .collect()
         }
 
-        // Helper to convert indices to bitmask
-        fn to_bitmask(bits: &[u32]) -> u32 {
-            bits.iter().fold(0u32, |mask, &bit| mask | (1 << bit))
-        }
-
-        // 2. All (...) groups
-        let toggles: Vec<u32> = parts[1..parts.len() - 1]
-            .iter()
-            .filter(|s| s.starts_with('('))
-            .map(|s| to_bitmask(&parse_paren(s)))
-            .collect();
-
-        // 3. All (...) groups
+        // All (...) groups
         let toggle_indices: Vec<Vec<u32>> = parts[1..parts.len() - 1]
             .iter()
             .filter(|s| s.starts_with('('))
             .map(|s| parse_paren(s))
             .collect();
 
-        // 4. Parse {...}
-        let joltages: Vec<u32> = parts
+        // Parse {...}
+        let joltages: Vec<i32> = parts
             .last()
             .unwrap()
             .trim_start_matches('{')
             .trim_end_matches('}')
             .split(',')
-            .map(|x| x.parse::<u32>().unwrap())
+            .map(|x| x.parse::<i32>().unwrap())
             .collect();
 
         Ok(Light {
             light_diagram: diagram_pattern,
-            toggles,
             toggle_indices,
             joltages,
         })
@@ -96,28 +180,18 @@ impl Solver {
 
 impl SolverBase for Solver {
     fn solve_part_one(&self) -> String {
-        fn bfs(light: &Light) -> usize {
-            let mut queue: VecDeque<(u32, usize)> = VecDeque::new();
-            queue.push_back((0, 0));
-            while let Some((pattern, depth)) = queue.pop_front() {
-                for toggle_indices in &light.toggles {
-                    let new_pattern = pattern ^ toggle_indices;
-                    if new_pattern == light.light_diagram {
-                        return depth + 1;
-                    }
-                    queue.push_back((new_pattern, depth + 1));
-                }
-            }
-            unreachable!()
-        }
-
-        let sum: usize = self.lights.iter().map(bfs).sum();
+        let sum = self.lights.iter().map(fewest_presses).sum::<usize>();
         sum.to_string()
     }
 
     fn solve_part_two(&self) -> String {
         // see: https://old.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
-        todo!()
+        let sum = self
+            .lights
+            .iter()
+            .map(fewest_joltage_presses)
+            .sum::<usize>();
+        sum.to_string()
     }
 
     fn day_number(&self) -> usize {
