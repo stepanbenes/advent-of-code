@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use solver::SolverBase;
 
@@ -34,18 +34,37 @@ impl Solver {
         to: &'static str,
         must_visit: &[&'static str],
     ) -> usize {
-        self.count_paths_that_contains_devices(from, to, &must_visit.to_vec())
+        let mut cache = HashMap::new();
+        self.count_paths_that_contains_devices(from, to, &must_visit.to_vec(), &mut cache)
     }
 
-    fn count_paths_that_contains_devices(&self, from: &'static str, to: &'static str, must_visit: &Vec<&'static str>) -> usize {
+    fn count_paths_that_contains_devices(
+        &self,
+        from: &'static str,
+        to: &'static str,
+        must_visit: &Vec<&'static str>,
+        cache: &mut HashMap<(&str, Vec<&str>), usize>,
+    ) -> usize {
         if from == to {
             return if must_visit.is_empty() { 1 } else { 0 };
         }
-        let must_visit = if must_visit.contains(&from) { &must_visit.iter().filter(|x| **x != from).map(|x| *x).collect::<Vec<&'static str>>() } else { must_visit };
+        if let Some(&length) = cache.get(&(from, must_visit.clone())) {
+            return length;
+        }
+        let must_visit = if must_visit.contains(&from) {
+            &must_visit
+                .iter()
+                .filter(|x| **x != from)
+                .copied()
+                .collect::<Vec<&'static str>>()
+        } else {
+            must_visit
+        };
         let mut sum = 0;
         for output in self.devices.get(from).unwrap() {
-            sum += self.count_paths_that_contains_devices(output, to, must_visit);
+            sum += self.count_paths_that_contains_devices(output, to, must_visit, cache);
         }
+        cache.insert((from, must_visit.clone()), sum);
         sum
     }
 }
