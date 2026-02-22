@@ -11,6 +11,7 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 fn main() {
     let solvers: Vec<Box<dyn SolverBase>> = vec![
@@ -25,6 +26,7 @@ fn main() {
         Box::new(day09::Solver::new(include_str!("../input/day09.txt"))),
         Box::new(day10::Solver::new(include_str!("../input/day10.txt"))),
         Box::new(day11::Solver::new(include_str!("../input/day11.txt"))),
+        Box::new(day12::Solver::new(include_str!("../input/day12.txt"))),
     ];
 
     for solver in solvers {
