@@ -8,9 +8,57 @@ pub struct Solver {
     regions: Vec<Region>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct Shape {
     diagram: [[bool; SHAPE_WIDTH]; SHAPE_LENGTH],
+}
+
+impl Shape {
+    pub fn rotate(&self) -> Shape {
+        let mut result = self.clone();
+        for i in 0..SHAPE_LENGTH {
+            let new_i = SHAPE_LENGTH - 1 - i;
+            for j in 0..SHAPE_WIDTH {
+                result.diagram[j][new_i] = self.diagram[i][j];
+            }
+        }
+        result
+    }
+
+    pub fn flip_horizontally(&self) -> Shape {
+        let mut result = self.clone();
+        for i in 0..SHAPE_LENGTH {
+            for j in 0..SHAPE_WIDTH {
+                let new_j = SHAPE_WIDTH - 1 - j;
+                result.diagram[i][new_j] = self.diagram[i][j];
+            }
+        }
+        result
+    }
+
+    pub fn flip_vertically(&self) -> Shape {
+        let mut result = self.clone();
+        for i in 0..SHAPE_LENGTH {
+            let new_i = SHAPE_LENGTH - 1 - i;
+            for j in 0..SHAPE_WIDTH {
+                result.diagram[new_i][j] = self.diagram[i][j];
+            }
+        }
+        result
+    }
+}
+
+impl ToString for Shape {
+    fn to_string(&self) -> String {
+        let mut s = String::new();
+        for i in 0..SHAPE_LENGTH {
+            for j in 0..SHAPE_WIDTH {
+                s.push(if self.diagram[i][j] { '#' } else { '.' });
+            }
+            s.push('\n');
+        }
+        s
+    }
 }
 
 #[derive(Debug)]
@@ -145,6 +193,66 @@ mod part1_tests {
         )
         .solve_part_one();
         assert_eq!(result, "2");
+    }
+
+    #[test]
+    fn test_flip_horizontally() {
+        let solver = Solver::new(
+            r"0:
+###
+##.
+##.
+
+",
+        );
+        let flipped_shape = solver.shapes[0].flip_horizontally();
+        assert_eq!(
+            flipped_shape.to_string(),
+            r"###
+.##
+.##
+"
+        );
+    }
+
+    #[test]
+    fn test_flip_vertically() {
+        let solver = Solver::new(
+            r"0:
+###
+##.
+##.
+
+",
+        );
+        let flipped_shape = solver.shapes[0].flip_vertically();
+        assert_eq!(
+            flipped_shape.to_string(),
+            r"##.
+##.
+###
+"
+        );
+    }
+
+    #[test]
+    fn test_rotate() {
+        let solver = Solver::new(
+            r"0:
+###
+##.
+##.
+
+",
+        );
+        let flipped_shape = solver.shapes[0].rotate();
+        assert_eq!(
+            flipped_shape.to_string(),
+            r"###
+###
+..#
+"
+        );
     }
 }
 
